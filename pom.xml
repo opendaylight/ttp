@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>org.opendaylight.ttp</groupId>
+  <artifactId>ttp</artifactId>
+  <version>0.0.1-SNAPSHOT</version>
+  <packaging>pom</packaging>
+  <prerequisites>
+    <maven>3.0</maven>
+  </prerequisites>
+  <modules>
+    <!-- <module>parent</module>
+    <module>packethandler</module>
+    <module>distribution/base</module>
+    <module>l2switch-main</module>
+    <module>arpdecoder</module>
+    <module>ipv4decoder</module>
+    <module>ipv6decoder</module>
+    <module>addresstracker</module>
+    <module>l2switch-controller-config</module> -->
+  </modules>
+  <scm>
+    <connection>scm:git:ssh://git.opendaylight.org:29418/ttp.git</connection>
+    <developerConnection>scm:git:ssh://git.opendaylight.org:29418/ttp.git</developerConnection>
+    <tag>HEAD</tag>
+    <url>https://wiki.opendaylight.org/view/Table_Type_Patterns:Main</url>
+  </scm>
+  <distributionManagement>
+    <!-- OpenDayLight Released artifact -->
+    <repository>
+      <id>opendaylight-release</id>
+      <url>http://nexus.opendaylight.org/content/repositories/opendaylight.release/</url>
+    </repository>
+    <!-- OpenDayLight Snapshot artifact -->
+    <snapshotRepository>
+      <id>opendaylight-snapshot</id>
+      <url>http://nexus.opendaylight.org/content/repositories/opendaylight.snapshot/</url>
+    </snapshotRepository>
+    <site>
+      <id>${project.artifactId}-site</id>
+      <url>./</url>
+    </site>
+  </distributionManagement>
+</project>
