@@ -1,3 +1,5 @@
+#!/usr/local/bin/python
+
 # Copyright (c) 2014 Brocade Communications Systems others. All rights reserved.
 #
 # This program and the accompanying materials are made available under the
@@ -6,6 +8,7 @@
 
 import os
 import json
+
 def processDict(k,D):
     '''Doc string: process top level TTP Dictionary member'''
     Dkeys = list(D.keys())
@@ -13,11 +16,11 @@ def processDict(k,D):
 
 def processList(k,L):
     '''Doc string: process top level TTP List member'''
-    print (k, 'len=', len(L), "names:\n    ",end='')
+    print (k, 'len=', len(L), "names:\n    ")
     for j in L[:]:
         if isinstance(j,dict):
             if "name" in j.keys():
-                print (j["name"], end=', ')
+                print (j["name"])
     print()
 
 #should change "gather" function to fully process / validate Flow tables?
@@ -198,6 +201,7 @@ def gatherFThops(flowTable, ftDests):
                     return {}
                 hops[hopName] = hop[1]
     return hops
+
 #
 #
 # MAIN PROGRAM BEGINS HERE
@@ -248,7 +252,7 @@ for i in range(len(flowTables)):
     ftDests = gatherFTdests(flowTables[i])
     ftHops = gatherFThops(flowTables[i], ftDests)
     ftNum = tableMap[ftName]
-    print("FT#", ftNum,"named",ftName,end='')
+    print("FT#", ftNum,"named",ftName)
     if len(ftDests) != 0:
         dests.append(ftDests)
         print(" has these FM:dest combos")
