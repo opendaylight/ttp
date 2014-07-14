@@ -1,0 +1,172 @@
+/*
+ * Copyright (c) 2014 Brocade Communications Systems others. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+
+module onf-ttp {
+  namespace "urn:onf:ttp";
+  prefix ttp;
+
+  import openflow-extensible-match {prefix oxm;}
+  //import openflow-instruction {prefix ofi;}
+  import openflow-types {prefix oft;}
+
+  revision 2014-07-11 {
+    description "ONF TTP schema 2014/07/11";
+  }
+
+  grouping name-property {
+    description "denotes something that has a name, which is a string";
+
+    leaf name {
+      type string;
+    }
+  }
+
+  grouping doc-property {
+    description "denotes something that has documentation as a list of strings";
+
+    leaf-list doc {
+      type string;
+    }
+  }
+
+  grouping type-property {
+    description "denotes something that has a type identified with a string";
+
+    leaf type {
+      type string;
+    }
+  }
+
+  grouping NDM_metadata-properties {
+    description "metadata about an NDM (or TTP)";
+
+    leaf authority {
+       type string;
+    }
+
+    leaf OF_protocol_version {
+       type string;
+    }
+
+    leaf version {
+       type string;
+    }
+
+    uses type-property;
+    uses name-property;
+    uses doc-property;
+  }
+
+  grouping table-type-pattern {
+    container NDM_metadata {
+      uses NDM_metadata-properties;
+    }
+
+    list table_map {
+      key name;
+      leaf name {
+        type string;
+      }
+      leaf number {
+        type uint8;
+      }
+    }
+
+    list variables {
+      uses name-property;
+      uses doc-property;
+    }
+
+    list flow_tables {
+      uses name-property;
+      uses doc-property;
+      list flow_mod_types {
+        list match_set {
+          leaf field {
+            type identityref {
+              base oxm:match-field;
+            }
+          }
+          leaf wc_type {
+            description "Wildcard type";
+            type enumeration {
+              enum all_or_none;
+              enum none;
+              //TODO: are there more?
+            }
+          }
+        }
+        container instruction_set {
+          list exactly_one {
+            list option { //TODO: this should be an anonymous list, but I don't know how
+              leaf instruction {
+                type identityref {
+                  base oft:instruction-base;
+                }
+              }
+              //TODO: need a leaf for the conditional instruction parameters
+            }
+          }
+        }
+      }
+    }
+
+    container meter_table {
+      list meter_types {
+        uses name-property;
+        leaf type {
+          type enumeration {
+            enum DROP;
+            //TODO: what are the others?
+          }
+        }
+        leaf rate {
+          type string;
+          //TODO: should be min/max?
+        }
+        leaf burst {
+          type string;
+          //TODO: should be min/max?
+        }
+      }
+      list built_in_meters {
+        uses name-property;
+        leaf meter_id {
+          type uint32; //TODO: right int?
+        }
+        leaf rate {
+          type uint32; //TODO: right int?
+        }
+        leaf burst {
+          type uint32; //TODO: right int?
+        }
+      }
+    }    
+
+    list parameters {
+      uses name-property;
+      uses doc-property;
+      uses type-property;
+    }
+
+    list group_entry_types {
+      //TODO: model
+    }
+
+    list flow_paths {
+      //TODO: model
+    }
+  }
+
+  container opendaylight-ttps {
+    list table-type-patterns {
+      uses table-type-pattern;
+    }
+    description "The global TTP registry for OpenDaylight";
+  }
+}
