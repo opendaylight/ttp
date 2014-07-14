@@ -1,6 +1,33 @@
-*.class
-*~
-target
-.project
+#####standard .gitignore entries#####
+
+## IDE Specific Files ##
 .classpath
+.project
 .settings
+.idea
+.externalToolBuilders
+maven-eclipse.xml
+workspace
+
+## Compilation Files ##
+*.class
+**/target
+target
+target-ide
+MANIFEST.MF
+
+## Misc Ignores (OS specific etc) ##
+bin/
+dist
+*~
+*.ipr
+*.iml
+*.iws
+classes
+out/
+.DS_STORE
+.metadata
+
+## Folders which contain auto generated source code ##
+yang-gen-config
+yang-gen-sal
