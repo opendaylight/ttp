@@ -41,7 +41,7 @@ def gatherFTnames(FTlist):
             else:
                 ftNames.append(ftName)
     return ftNames
-#
+
 def gatherFTnums(tableMap,ftNames):
     '''check that some table maps to 0, and that number is unique'''
     ftNums=[]
@@ -57,7 +57,7 @@ def gatherFTnums(tableMap,ftNames):
     if 0 not in ftNums:
         print ("Table Map does not include a zero table!")
     return ftNums;
-#
+
 def getDest(fm):
     dest = ()
     gotDest = False
@@ -95,7 +95,7 @@ def getDest(fm):
         dest = fmtName,iset[k]['table']
         gotDest = True
     return dest
-#
+
 def gatherFTdests(flowTable):
     '''gather all goto destinations for a flow table'''
     dests={}
