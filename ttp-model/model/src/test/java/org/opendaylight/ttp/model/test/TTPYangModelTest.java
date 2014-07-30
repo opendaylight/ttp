@@ -1,15 +1,17 @@
 package org.opendaylight.ttp.model.test;
 
+import static org.junit.Assert.assertNotNull;
+
 import java.io.ByteArrayOutputStream;
 import java.util.Arrays;
-
+import java.util.Set;
 import javassist.ClassPool;
-
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.opendaylight.controller.sal.rest.impl.StructuredDataToJsonProvider;
 import org.opendaylight.controller.sal.rest.impl.StructuredDataToXmlProvider;
+import org.opendaylight.controller.sal.restconf.impl.ControllerContext;
+import org.opendaylight.controller.sal.restconf.impl.InstanceIdWithSchemaNode;
 import org.opendaylight.controller.sal.restconf.impl.StructuredData;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.NDMMetadata;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.NDMMetadataBuilder;
@@ -24,6 +26,9 @@ import org.opendaylight.yangtools.yang.data.api.CompositeNode;
 import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlDocumentUtils;
 import org.opendaylight.yangtools.yang.data.impl.codec.xml.XmlUtils;
+import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
+import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
+import org.opendaylight.yangtools.yang.model.api.GroupingDefinition;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
 import org.w3c.dom.Document;
 import org.w3c.dom.bootstrap.DOMImplementationRegistry;
@@ -131,7 +136,32 @@ public class TTPYangModelTest {
     private StructuredData structuredDataFromCompositeNode(CompositeNode compNode) {
         // Create structured data, the null is an unused mountpoint
         // final true/false is to turn on/off pretty printing
-        return new StructuredData(compNode, context, null, true);
+        DataSchemaNode NDM_metadata = null;
+        //first solution
+        NDM_metadata = findSchemaForTableTypePattern(context);
+        //second solution
+        ControllerContext controllerContext = ControllerContext.getInstance();
+        controllerContext.setSchemas(context);
+        InstanceIdWithSchemaNode iiAndSchema = controllerContext.toInstanceIdentifier("/onf-ttp:opendaylight-ttps/table-type-patterns/NDM_metadata");
+        NDM_metadata = iiAndSchema.getSchemaNode();
+
+        return new StructuredData(compNode, NDM_metadata, null, true);
+    }
+
+    private DataSchemaNode findSchemaForTableTypePattern(SchemaContext context) {
+        Set<GroupingDefinition> groupings = context.getGroupings();
+        DataNodeContainer tableTypePatternGrouping = null;
+        for (GroupingDefinition grouping : groupings) {
+            if (grouping.getQName().getLocalName().equals("table-type-pattern")) {
+                tableTypePatternGrouping = grouping;
+                break;
+            }
+        }
+        assertNotNull(tableTypePatternGrouping);
+        DataSchemaNode nDMMetadataContainer = tableTypePatternGrouping.getDataChildByName("NDM_metadata");
+        assertNotNull(nDMMetadataContainer);
+
+        return nDMMetadataContainer;
     }
 
     private StructuredData structuredDataFromDataObject(DataObject d) {
