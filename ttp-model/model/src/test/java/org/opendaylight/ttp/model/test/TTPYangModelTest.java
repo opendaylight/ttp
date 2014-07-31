@@ -15,14 +15,14 @@ import org.junit.Test;
 import org.opendaylight.controller.sal.rest.impl.StructuredDataToJsonProvider;
 import org.opendaylight.controller.sal.rest.impl.StructuredDataToXmlProvider;
 import org.opendaylight.controller.sal.restconf.impl.StructuredData;
-import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.opendaylight.ttps.TableTypePatterns;
-import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.opendaylight.ttps.TableTypePatternsBuilder;
-import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.NDMMetadata;
-import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.NDMMetadataBuilder;
-import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.Parameters;
-import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.ParametersBuilder;
-import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.Variables;
-import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.VariablesBuilder;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.opendaylight.ttps.table.type.patterns.TableTypePattern;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.opendaylight.ttps.table.type.patterns.TableTypePatternBuilder;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.NDMMetadata;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.NDMMetadataBuilder;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.Parameters;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.ParametersBuilder;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.Variables;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.VariablesBuilder;
 import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleInfoBackedContext;
 import org.opendaylight.yangtools.sal.binding.generator.impl.RuntimeGeneratedMappingServiceImpl;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -128,13 +128,13 @@ public class TTPYangModelTest {
         /*
          * test variables
          */
-        TableTypePatternsBuilder t = new TableTypePatternsBuilder();
+        TableTypePatternBuilder t = new TableTypePatternBuilder();
         Variables p1 = new VariablesBuilder().setDoc(Arrays.asList("documentation"))
                 .setName("Showing-curt-how-this-works").build();
         Variables p2 = new VariablesBuilder().setDoc(Arrays.asList("documentation"))
                 .setName("Showing-curt-how-this-works").build();
         t.setVariables(Arrays.asList(p1, p2));
-        TableTypePatterns builtTTP = t.build();
+        TableTypePattern builtTTP = t.build();
         testJsonConversion(expectedStr, builtTTP);
         System.out.println(builtTTP.getVariables().getClass().getName());
     }

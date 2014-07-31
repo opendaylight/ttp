@@ -62,7 +62,7 @@ module onf-ttp {
     uses doc-property;
   }
 
-  grouping table-type-pattern {
+  grouping table-type-pattern-properties {
     container NDM_metadata {
       uses NDM_metadata-properties;
     }
@@ -158,14 +158,25 @@ module onf-ttp {
       //TODO: model
     }
 
+    // We wanted: "flow_paths": ["path": ["table1", ["table2"] ] ]
+    // We did: "flow_paths": ["path": ["table1", "[table2]" ] ]
     list flow_paths {
-      //TODO: model
+      uses name-property;
+      uses doc-property;
+      leaf-list path {
+        description "a list of strings each of which must be the name of a
+                     table from the table_map or the name of a table in square
+                     brackets.";
+        type string;
+      }
     }
   }
 
   container opendaylight-ttps {
-    list table-type-patterns {
-      uses table-type-pattern;
+    container table-type-patterns {
+      list table-type-pattern {
+        uses table-type-pattern-properties;
+      }
     }
     description "The global TTP registry for OpenDaylight";
   }
