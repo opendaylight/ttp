@@ -21,8 +21,8 @@ import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.pro
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.NDMMetadataBuilder;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.Parameters;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.ParametersBuilder;
-import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.Variables;
-import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.VariablesBuilder;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.Identifiers;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.IdentifiersBuilder;
 import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleInfoBackedContext;
 import org.opendaylight.yangtools.sal.binding.generator.impl.RuntimeGeneratedMappingServiceImpl;
 import org.opendaylight.yangtools.yang.binding.DataObject;
@@ -126,17 +126,17 @@ public class TTPYangModelTest {
         testJsonConversion(expectedStr, p);
 
         /*
-         * test variables
+         * test Identifiers
          */
         TableTypePatternBuilder t = new TableTypePatternBuilder();
-        Variables p1 = new VariablesBuilder().setDoc(Arrays.asList("documentation"))
+        Identifiers p1 = new IdentifiersBuilder().setDoc(Arrays.asList("documentation"))
                 .setName("Showing-curt-how-this-works").build();
-        Variables p2 = new VariablesBuilder().setDoc(Arrays.asList("documentation"))
+        Identifiers p2 = new IdentifiersBuilder().setDoc(Arrays.asList("documentation"))
                 .setName("Showing-curt-how-this-works").build();
-        t.setVariables(Arrays.asList(p1, p2));
+        t.setIdentifiers(Arrays.asList(p1, p2));
         TableTypePattern builtTTP = t.build();
         testJsonConversion(expectedStr, builtTTP);
-        System.out.println(builtTTP.getVariables().getClass().getName());
+        System.out.println(builtTTP.getIdentifiers().getClass().getName());
     }
 
     /**

@@ -26,6 +26,14 @@ module onf-ttp {
     }
   }
 
+  grouping opt-tag-property {
+    description "denotes strings that represent optional functionality in the TTP";
+
+    leaf opt-tag {
+      type string;
+    }
+  }
+
   grouping doc-property {
     description "denotes something that has documentation as a list of strings";
 
@@ -33,6 +41,15 @@ module onf-ttp {
       type string;
     }
   }
+
+  grouping universal-TTP-properties {
+    description "these properties are applicable to all objects in TTPs";
+
+    uses name-property;
+    uses opt-tag-property;
+    uses doc-property;
+  }
+
 
   grouping type-property {
     description "denotes something that has a type identified with a string";
@@ -58,8 +75,7 @@ module onf-ttp {
     }
 
     uses type-property;
-    uses name-property;
-    uses doc-property;
+    uses universal-TTP-properties;
   }
 
   grouping table-type-pattern-properties {
@@ -67,7 +83,24 @@ module onf-ttp {
       uses NDM_metadata-properties;
     }
 
-    list table_map {
+    list identifiers {
+      uses universal-TTP-properties;
+      leaf var {
+        type string;
+      }
+      leaf range {
+        type string;
+      }
+    }
+
+    list features {
+      uses universal-TTP-properties;
+      leaf feature {
+        type string;
+      }
+    }
+
+    list table_map { // intentionally not using the "univ TTP props"
       key name;
       leaf name {
         type string;
@@ -77,14 +110,42 @@ module onf-ttp {
       }
     }
 
-    list variables {
-      uses name-property;
-      uses doc-property;
+    container meter_table {
+      list meter_types {
+        uses universal-TTP-properties;
+        leaf type {
+          type enumeration {
+            enum DROP;
+            enum DSCP_REMARK;
+            //TODO: what are the others?
+          }
+        }
+        leaf rate {
+          type string;
+          //TODO: should be min/max?
+        }
+        leaf burst {
+          type string;
+          //TODO: should be min/max?
+        }
+      }
+      list built_in_meters {
+        uses universal-TTP-properties;
+        leaf meter_id {
+          type uint32; //TODO: right int?
+        }
+        leaf rate {
+          type uint32; //TODO: right int?
+        }
+        leaf burst {
+          type uint32; //TODO: right int?
+        }
+      }
     }
 
     list flow_tables {
-      uses name-property;
-      uses doc-property;
+      //TODO: can inner types also have the univ TTP properties?
+      uses universal-TTP-properties;
       list flow_mod_types {
         list match_set {
           leaf field {
@@ -116,59 +177,34 @@ module onf-ttp {
       }
     }
 
-    container meter_table {
-      list meter_types {
-        uses name-property;
-        leaf type {
-          type enumeration {
-            enum DROP;
-            //TODO: what are the others?
-          }
-        }
-        leaf rate {
-          type string;
-          //TODO: should be min/max?
-        }
-        leaf burst {
-          type string;
-          //TODO: should be min/max?
-        }
-      }
-      list built_in_meters {
-        uses name-property;
-        leaf meter_id {
-          type uint32; //TODO: right int?
-        }
-        leaf rate {
-          type uint32; //TODO: right int?
-        }
-        leaf burst {
-          type uint32; //TODO: right int?
-        }
-      }
-    }    
-
-    list parameters {
-      uses name-property;
-      uses doc-property;
-      uses type-property;
-    }
-
     list group_entry_types {
       //TODO: model
+    }
+
+    list packet_out {
+      uses universal-TTP-properties;
+      //TODO: model
+    }
+
+    list parameters {
+      uses universal-TTP-properties;
+      uses type-property;
     }
 
     // We wanted: "flow_paths": ["path": ["table1", ["table2"] ] ]
     // We did: "flow_paths": ["path": ["table1", "[table2]" ] ]
     list flow_paths {
-      uses name-property;
-      uses doc-property;
+      uses universal-TTP-properties;
       leaf-list path {
         description "a list of strings each of which must be the name of a
                      table from the table_map or the name of a table in square
                      brackets.";
         type string;
       }
+    }
+
+    container security {
+      uses universal-TTP-properties;
     }
   }
 
