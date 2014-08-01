@@ -7,6 +7,12 @@
  */
 
 module onf-ttp {
+  /* Notes:
+   *  => Comments that start with "SPEC:" are feedback for the ONF
+   *  => Comments that start with "REFINE:" are notes for where we could enhance things
+   *  => Comments that start with "TODO:" are places where we *need* to do work
+   */
+
   namespace "urn:onf:ttp";
   prefix ttp;
 
@@ -43,6 +49,7 @@ module onf-ttp {
   }
 
   grouping universal-TTP-properties {
+    //SPEC: exactly what can have have these?
     description "these properties are applicable to all objects in TTPs";
 
     uses name-property;
@@ -89,14 +96,22 @@ module onf-ttp {
         type string;
       }
       leaf range {
+        //REFINE: we can add a regex patter to restrict this
+        //REFINE: also make sure range in YANG doesn't do this
         type string;
       }
+
+      //TODO: figure out how/if we want to include extensions
+      //SPEC: need an example for how an extension will be specified
+
+      //SPEC: should be clearer about Varibles vs. Identifiers
     }
 
     list features {
       uses universal-TTP-properties;
       leaf feature {
         type string;
+        //REFINE: can we restrict this more than just a string?
       }
     }
 
@@ -108,43 +123,50 @@ module onf-ttp {
       leaf number {
         type uint8;
       }
+      //SPEC: you can't do what is there in YANG, maybe put name in the tables in flow_tables?
     }
 
     container meter_table {
+      uses universal-TTP-properties;
       list meter_types {
         uses universal-TTP-properties;
-        leaf type {
-          type enumeration {
-            enum DROP;
-            enum DSCP_REMARK;
-            //TODO: what are the others?
+        list bands {
+          uses universal-TTP-properties;
+          leaf type {
+            type enumeration {
+              enum DROP;
+              enum DSCP_REMARK;
+            }
           }
-        }
-        leaf rate {
-          type string;
-          //TODO: should be min/max?
-        }
-        leaf burst {
-          type string;
-          //TODO: should be min/max?
+          leaf rate {
+            type string;
+            //REFINE: use a regex patter?
+            //SPEC: make min and max as ints?
+          }
+          leaf burst {
+            type string;
+            //REFINE: use a regex patter?
+            //SPEC: make min and max as ints?
+          }
         }
       }
       list built_in_meters {
         uses universal-TTP-properties;
         leaf meter_id {
-          type uint32; //TODO: right int?
+          type uint32; //borrowed from OF spec
         }
         leaf rate {
-          type uint32; //TODO: right int?
+          type uint32;
+          //REFINE: right int?
         }
         leaf burst {
-          type uint32; //TODO: right int?
+          type uint32;
+          //REFINE: right int?
         }
       }
     }
 
     list flow_tables {
-      //TODO: can inner types also have the univ TTP properties?
       uses universal-TTP-properties;
       list flow_mod_types {
         list match_set {
@@ -178,6 +200,7 @@ module onf-ttp {
     }
 
     list group_entry_types {
+      uses universal-TTP-properties;
       //TODO: model
     }
 
@@ -189,10 +212,16 @@ module onf-ttp {
     list parameters {
       uses universal-TTP-properties;
       uses type-property;
+      leaf default {
+        type union {
+          type string;
+          type uint32;
+          //TODO: is this sufficient?
+          //SPEC: this seems ambiguous in the spec
+        }
+      }
     }
 
-    // We wanted: "flow_paths": ["path": ["table1", ["table2"] ] ]
-    // We did: "flow_paths": ["path": ["table1", "[table2]" ] ]
     list flow_paths {
       uses universal-TTP-properties;
       leaf-list path {
@@ -200,7 +229,18 @@ module onf-ttp {
                      table from the table_map or the name of a table in square
                      brackets.";
         type string;
+        //SPEC: rework, can't have this in YANG
+        // We wanted: "flow_paths": ["path": ["table1", ["table2"] ] ]
+        // We did: "flow_paths": ["path": ["table1", "[table2]" ] ]
       }
+      leaf-list no-path {
+        description "a list of strings each of which must be the name of a
+                     table from the table_map or the name of a table in square
+                     brackets.";
+        type string;
+      }
+      //REFINE: this is really either path or no-path. can we do better in modeling?
+      //SPEC: could be clearer about whether you can mix path and no-path and if so, what happens.
     }
 
     container security {
