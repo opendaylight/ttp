@@ -20,6 +20,7 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
+                <version>${bundle.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
@@ -91,6 +92,8 @@
         </pluginManagement>
     </build>
     <dependencies>
+
+      <!-- YANG Tools Dependencies -->
       <dependency>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>yang-binding</artifactId>
@@ -126,36 +129,34 @@
         <artifactId>yang-data-impl</artifactId>
         <version>${yangtools.version}</version>
       </dependency>
+
+      <!-- Controller Dependencies -->
       <dependency>
         <artifactId>sal-binding-broker-impl</artifactId>
         <groupId>org.opendaylight.controller</groupId>
-        <version>1.1-SNAPSHOT</version>
-      </dependency>
-      <dependency>
-        <groupId>com.google.code.gson</groupId>
-        <artifactId>gson</artifactId>
-        <version>2.2.4</version>
+        <version>${controller.version}</version>
       </dependency>
       <dependency>
         <groupId>org.opendaylight.controller</groupId>
         <artifactId>sal-rest-connector</artifactId>
-        <version>1.1-SNAPSHOT</version>
+        <version>${controller.version}</version>
       </dependency>
+
+      <!-- Third Party Libraries -->
       <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>jaxrs-api</artifactId>
-        <version>3.0.4.Final</version>
+        <version>3.0.4.Final</version> <!-- TODO: this should move to old-parent -->
       </dependency>
       <dependency>
         <groupId>junit</groupId>
         <artifactId>junit</artifactId>
-        <version>4.8.1</version>
         <scope>test</scope>
       </dependency>
-<!-- <dependency>
-        <groupId>junit</groupId>
-        <artifactId>junit</artifactId>
-        <scope>test</scope>
-      </dependency>  -->
+      <dependency>
+        <groupId>com.google.code.gson</groupId>
+        <artifactId>gson</artifactId>
+      </dependency>
+
     </dependencies>
 </project>
