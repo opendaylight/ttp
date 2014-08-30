@@ -90,7 +90,7 @@
     <repository>
       <id>opendaylight-snapshot</id>
       <name>opendaylight-snapshot</name>
-      <url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
+      <url>http://nexus.opendaylight.org/content/repositories/opendaylight.snapshot</url>
       <snapshots>
       </snapshots>
       <releases>
