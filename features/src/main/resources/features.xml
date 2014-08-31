@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright (c) 2014 Brocade Communications Systems, Inc. and others.  All rights reserved.
+
+ This program and the accompanying materials are made available under the
+ terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ and is available at http://www.eclipse.org/legal/epl-v10.html
+-->
+<features name="odl-ttp-${project.version}" xmlns="http://karaf.apache.org/xmlns/features/v1.2.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://karaf.apache.org/xmlns/features/v1.2.0 http://karaf.apache.org/xmlns/features/v1.2.0">
+
+    <!-- Karaf Features repositories that TTP depends on -->
+    <repository>mvn:org.opendaylight.yangtools/features-yangtools/${yangtools.version}/xml/features</repository>
+    <repository>mvn:org.opendaylight.openflowjava/features-openflowjava/${openflowjava.version}/xml/features</repository>
+
+    <!-- TTP "all" feature -->
+    <feature name='odl-ttp-all' version='${project.version}' description='OpenDaylight :: ttp :: All'>
+        <feature version='${project.version}'>odl-ttp-model</feature>
+    </feature>
+
+    <!-- TTP Model feature -->
+    <feature name='odl-ttp-model' version='${project.version}' description='OpenDaylight :: ttp :: Model'>
+        <feature version='${yangtools.version}'>odl-yangtools-binding</feature>
+        <feature version='${yangtools.version}'>odl-yangtools-models</feature>
+        <feature version='${openflowjava.version}'>odl-openflowjava-protocol</feature>
+        <bundle>mvn:org.opendaylight.ttp/ttp-model/${project.version}</bundle>
+    </feature>
+
+    <!--
+        Done TODO: Define your features.  It is useful to list then in order of dependency.  So if A depends on B, list A first.
+        When naming your features please be mindful of the guidelines:
+            https://wiki.opendaylight.org/view/Runtime:Karaf_Features_Guidelines
+        Particularly:
+            a) Prefixing names with 'odl-': https://wiki.opendaylight.org/view/Runtime:Karaf_Features_Guidelines#Feature_Naming
+            b) Descriptions: https://wiki.opendaylight.org/view/Runtime:Karaf_Features_Guidelines#Description
+            c) Avoid start-levels: https://wiki.opendaylight.org/view/Runtime:Karaf_Features_Guidelines#Avoid_start-levels
+
+        It's also nice to list inside a feature, first the features it needs, then the bundles it needs, then the configfiles.
+        Examples:
+
+        * Basic MD-SAL Provider
+        <feature name='odl-ttp-provider' version='${project.version}' description='OpenDaylight :: ttp :: Provider '>
+            <feature version='1.1-SNAPSHOT'>odl-mdsal-broker</feature>
+            <feature version='${project.version}'>odl-ttp-model</feature>
+            <bundle>mvn:org.opendaylight.ttp/ttp-provider/${project.version}</bundle>
+            ... whatever other bundles you need
+        </feature>
+
+        * Basic MD-SAL Model feature
+        <feature name='odl-ttp-model' version='${project.version}' description='OpenDaylight :: ttp :: Model'>
+            <feature version='0.6.2-SNAPSHOT'>odl-yangtools-binding</feature>
+            <feature version='0.6.2-SNAPSHOT'>odl-yangtools-models</feature>
+            <bundle>mvn:org.opendaylight.ttp/ttp-model/${project.version}</bundle>
+            ... whatever other bundles you need
+        </feature>
+
+        * Config Subsystem example - the config file is your config subsystem configuration
+        <feature name='odl-ttp-provider' version='${project.version}' description='OpenDaylight :: ttp :: Provider'>
+            <feature version='1.1-SNAPSHOT'>odl-mdsal-broker</feature>
+            <bundle>mvn:org.opendaylight.ttp/ttp-provider/${project.version}</bundle>
+            <configfile finalname="etc/opendaylight/karaf/80-ttp.xml">mvn:org.opendaylight.ttp/ttp-config/${project.version}/xml/config</configfile>
+            ... whatever other bundles you need
+        </feature>
+
+        * Basic MD-SAL Provider that uses openflowplugin-flow-services (which brings along odl-mdsal-broker)
+        <feature name='odl-ttp-provider' version='${project.version}' description='OpenDaylight :: ttp :: Provider'>
+            <feature version='0.0.3-SNAPSHOT'>odl-openflowplugin-flow-services</feature>
+            <bundle>mvn:org.opendaylight.ttp/ttp-provider/${project.version}</bundle>
+            ... whatever other bundles you need
+        </feature>
+
+    -->
+</features>
