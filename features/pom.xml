@@ -37,6 +37,7 @@
          <type>xml</type>
          <scope>compile</scope>
       </dependency>
+      <!-- We currently don't use this
       <dependency>
          <groupId>org.opendaylight.openflowjava</groupId>
          <artifactId>features-openflowjava</artifactId>
@@ -45,11 +46,18 @@
          <type>xml</type>
          <scope>compile</scope>
       </dependency>
+      -->
       <dependency>
          <groupId>org.opendaylight.ttp</groupId>
          <artifactId>ttp-model</artifactId>
          <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.opendaylight.controller.model</groupId>
+        <artifactId>model-inventory</artifactId>
+        <version>${controller.version}</version>
+      </dependency>
+
     <!--
       Done TODO: Put dependencies on any feature repos
       you use in your features.xml file.

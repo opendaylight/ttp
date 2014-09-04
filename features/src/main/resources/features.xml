@@ -12,7 +12,9 @@
 
     <!-- Karaf Features repositories that TTP depends on -->
     <repository>mvn:org.opendaylight.yangtools/features-yangtools/${yangtools.version}/xml/features</repository>
+    <!-- We currently don't use this
     <repository>mvn:org.opendaylight.openflowjava/features-openflowjava/${openflowjava.version}/xml/features</repository>
+    -->
 
     <!-- TTP "all" feature -->
     <feature name='odl-ttp-all' version='${project.version}' description='OpenDaylight :: ttp :: All'>
@@ -23,8 +25,11 @@
     <feature name='odl-ttp-model' version='${project.version}' description='OpenDaylight :: ttp :: Model'>
         <feature version='${yangtools.version}'>odl-yangtools-binding</feature>
         <feature version='${yangtools.version}'>odl-yangtools-models</feature>
+        <!-- We currently don't use this
         <feature version='${openflowjava.version}'>odl-openflowjava-protocol</feature>
+        -->
         <bundle>mvn:org.opendaylight.ttp/ttp-model/${project.version}</bundle>
+        <bundle>mvn:org.opendaylight.controller.model/model-inventory/${controller.version}</bundle>
     </feature>
 
     <!--

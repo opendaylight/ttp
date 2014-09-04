@@ -48,9 +48,11 @@ module onf-ttp {
   namespace "urn:onf:ttp";
   prefix ttp;
 
-  import openflow-extensible-match {prefix oxm;}
+  // Not using these because the TTP spec makes it difficult to reuse prior modeling efforts. Maybe
+  // we can use it in the future.
+  //import openflow-extensible-match {prefix oxm;}
   //import openflow-instruction {prefix ofi;}
-  import openflow-types {prefix oft;}
+  //import openflow-types {prefix oft;}
 
   revision 2014-07-11 {
     description "ONF TTP schema 2014/07/11";

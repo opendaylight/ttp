@@ -1,0 +1,34 @@
+/*
+ * Copyright (c) 2014 Brocade Communications Systems others. All rights reserved.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v1.0 which accompanies this distribution,
+ * and is available at http://www.eclipse.org/legal/epl-v10.html
+ */
+
+module ttp-inventory-node {
+  namespace "urn:odl:ttp";
+  prefix ttp-inv-node;
+
+  import onf-ttp {prefix ttp;}
+  import yang-ext {prefix "ext";}
+  import opendaylight-inventory {prefix inv;}
+
+  revision 2014-09-04 {
+    description "ODL Inventory Node TTP Augmentation 2014/09/04";
+  }
+
+  augment "/inv:nodes/inv:node" {
+    ext:augment-identifier "ttp-capable-node";
+
+    description "An augmentation of inventory node that provides an option active TTP and an
+                 optional list of supported TTPs";
+
+    container active_ttp {
+      uses ttp:table-type-pattern-properties;
+    }
+    list supported_ttps {
+      uses ttp:table-type-pattern-properties;
+    }
+  }
+}
