@@ -10,6 +10,7 @@ package org.opendaylight.ttp.model.test;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
@@ -23,12 +24,20 @@ import org.junit.Test;
 import org.opendaylight.controller.sal.rest.impl.StructuredDataToJsonProvider;
 import org.opendaylight.controller.sal.rest.impl.StructuredDataToXmlProvider;
 import org.opendaylight.controller.sal.restconf.impl.StructuredData;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.MatchSetProperties.MatchType;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.flow_mod.properties.InstructionSet;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.flow_mod.properties.InstructionSetBuilder;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.flow_mod.properties.MatchSet;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.flow_mod.properties.MatchSetBuilder;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.instruction_set.properties.ActionsBuilder;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.opendaylight.ttps.table.type.patterns.TableTypePattern;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.opendaylight.ttps.table.type.patterns.TableTypePatternBuilder;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.Features;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.FeaturesBuilder;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.FlowPaths;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.FlowPathsBuilder;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.FlowTables;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.FlowTablesBuilder;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.GroupEntryTypes;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.GroupEntryTypesBuilder;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.Identifiers;
@@ -38,11 +47,16 @@ import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.pro
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.NDMMetadata;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.NDMMetadataBuilder;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.Parameters;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.Parameters.Default;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.ParametersBuilder;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.Security;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.SecurityBuilder;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.TableMap;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.TableMapBuilder;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.flow_tables.BuiltInFlowMods;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.flow_tables.BuiltInFlowModsBuilder;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.flow_tables.FlowModTypes;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.flow_tables.FlowModTypesBuilder;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.group_entry_types.BucketTypes;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.group_entry_types.BucketTypesBuilder;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.group_entry_types.bucket_types.ActionSet;
@@ -271,7 +285,67 @@ public class TTPYangModelTest {
 
     @Test
     public void testFlowTables() throws Exception {
-        //TODO: write test
+        // TODO: write test
+        MatchSet matchSet1 = new MatchSetBuilder().setField("ETH_TYPE")
+                .setMatchType(MatchType.AllOrExact).build();
+        MatchSet matchSet2 = new MatchSetBuilder().setField("ETH_DST")
+                .setMatchType(MatchType.Exact).build();
+
+        InstructionSet instSet1 = new InstructionSetBuilder()
+                .setInstruction("METER")
+                .setMeterName("ControllerMeter")
+                .setDoc(Arrays.asList(
+                        "This meter may be used to limit the rate of PACKET_IN frames",
+                        "sent to the controller")).build();
+        InstructionSet instSet2 = new InstructionSetBuilder()
+                .setInstruction("APPLY_ACTIONS")
+                .setActions(
+                        Arrays.asList(new ActionsBuilder().setAction("OUTPUT")
+                                .setPort("CONTROLLER").build())).build();
+
+        FlowModTypes flowModType = new FlowModTypesBuilder()
+                .setName("Frame-To-Controller")
+                .setDoc(Arrays.asList(
+                        "This match/action pair allows for flow_mods that match on either",
+                        "ETH_TYPE or ETH_DST (or both) and send the packet to the",
+                        "controller, subject to metering."))
+                .setMatchSet(Arrays.asList(matchSet1, matchSet2))
+                .setInstructionSet(Arrays.asList(instSet1, instSet2)).build();
+
+        BuiltInFlowMods builtInFlowMod1 = new BuiltInFlowModsBuilder()
+                .setName("Control-Frame-Filter")
+                .setDoc(Arrays
+                        .asList("Mandatory filtering of control frames with C-VLAN Bridge reserved DA."))
+                .setPriority("1")
+                .setMatchSet(
+                        Arrays.asList(new MatchSetBuilder().setField("ETH_DST")
+                                .setMask("0xfffffffffff0").setValue("0x0180C2000000").build()))
+                .build();
+        BuiltInFlowMods builtInFlowMod2 = new BuiltInFlowModsBuilder()
+                .setName("Non-Control-Frame")
+                .setDoc(Arrays
+                        .asList("Mandatory miss flow_mod, sends packets to IngressVLAN table."))
+                .setPriority("0")
+                .setMatchSet(new ArrayList<MatchSet>())
+                .setInstructionSet(
+                        Arrays.asList(new InstructionSetBuilder().setInstruction("GOTO_TABLE")
+                                .setTable("IngressVLAN").build())).build();
+
+        FlowTables flowTable = new FlowTablesBuilder()
+                .setName("ControlFrame")
+                .setDoc(Arrays.asList("Filters L2 control reserved destination addresses and",
+                        "may forward control packets to the controller.",
+                        "Directs all other packets to the Ingress VLAN table."))
+                .setFlowModTypes(Arrays.asList(flowModType))
+                .setBuiltInFlowMods(Arrays.asList(builtInFlowMod1, builtInFlowMod2)).build();
+
+        // TODO: for reasons that are entirely unclear to me, serializing this resulted in the
+        //       "flow_table" key being omitted. My guess is using the wrong serialization.
+        // TableTypePattern ttp = new TableTypePatternBuilder()
+        //         .setFlowTables(Arrays.asList(flowTable)).build();
+
+        String expectedStr = "{\"name\": \"ControlFrame\",\"doc\": [\"Filters L2 control reserved destination addresses and\",\"may forward control packets to the controller.\",\"Directs all other packets to the Ingress VLAN table.\"],\"flow_mod_types\": [{\"name\": \"Frame-To-Controller\",\"doc\": [\"This match/action pair allows for flow_mods that match on either\",\"ETH_TYPE or ETH_DST (or both) and send the packet to the\",\"controller, subject to metering.\"],\"match_set\": [{\"field\": \"ETH_TYPE\",\"match_type\": \"all_or_exact\"},{\"field\": \"ETH_DST\",\"match_type\": \"exact\"}],\"instruction_set\": [{\"instruction\": \"METER\",\"meter_name\": \"ControllerMeter\",\"doc\": [\"This meter may be used to limit the rate of PACKET_IN frames\",\"sent to the controller\"]},{\"instruction\": \"APPLY_ACTIONS\",\"actions\": [{\"action\": \"OUTPUT\",\"port\": \"CONTROLLER\"}]}]}],\"built_in_flow_mods\": [{\"name\": \"Control-Frame-Filter\",\"doc\": [\"Mandatory filtering of control frames with C-VLAN Bridge reserved DA.\"],\"priority\": \"1\",\"match_set\": [{\"field\": \"ETH_DST\",\"mask\": \"0xfffffffffff0\",\"value\": \"0x0180C2000000\"}]},{\"name\": \"Non-Control-Frame\",\"doc\": [\"Mandatory miss flow_mod, sends packets to IngressVLAN table.\"],\"priority\": \"0\",\"instruction_set\": [{\"instruction\": \"GOTO_TABLE\",\"table\": \"IngressVLAN\"}]}]}";
+        assertConvertedJSONEquals("{\"flow_tables\":["+expectedStr+"]}", flowTable);
     }
 
     @Test
@@ -382,6 +456,17 @@ public class TTPYangModelTest {
         assertConvertedJSONEquals(expectedStr, sec);
     }
 
+    @Test
+    public void testParametersDefaulUnion() throws Exception {
+        //TODO: this doesn't work!?
+        Parameters param1 = new ParametersBuilder().setDefault(new Default((long) 27)).setName("long").build();
+        Parameters param2 = new ParametersBuilder().setDefault(new Default("RandomString")).setName("string").build();
+        System.out.println("Param1.default:\n  "+param1.getDefault()+"\nParam2.default:\n  "+param2.getDefault());
+        TableTypePattern ttp = new TableTypePatternBuilder().setParameters(Arrays.asList(param1, param2)).build();
+        System.out.println("Schema: "+getSchemaNodeForDataObject(context, ttp));
+        System.out.println("XXXYYY:\n"+jsonStringFromDataObject(ttp));
+    }
+
     /**
      * DON'T CALL THIS IN PRODUCTION CODE EVER!!! UNTIL IT IS FIXED!
      * <p/>
@@ -430,8 +515,8 @@ public class TTPYangModelTest {
         String prettyExpectedJson = gson.toJson(je);
 
         System.out.println("Generated JSON:\n" + jsonString);
-        JSONAssert.assertEquals(expectedJson, jsonString, JSONCompareMode.STRICT);
         System.out.println("Expected JSON:\n" + prettyExpectedJson);
+        JSONAssert.assertEquals(expectedJson, jsonString, JSONCompareMode.STRICT);
     }
 
     public static void main(String args[]) {

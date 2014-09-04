@@ -11,6 +11,38 @@ module onf-ttp {
    *  => Comments that start with "SPEC:" are feedback for the ONF
    *  => Comments that start with "REFINE:" are notes for where we could enhance things
    *  => Comments that start with "TODO:" are places where we *need* to do work
+   *
+   * High-level TODOs:
+   *  => add "mandatory true;" where things are required
+   *     - note that this might involve variants of universal TTP properties when some are required
+   *  => how to handle the "all", "one_or_more", "zero_or_more", "exactly_one", and "zero_or_one"
+   *     meta-member keywords?
+   *     - We currently support "all", "one_or_more" and "zero_or_more" directly under
+   *       "flow_mod_types" because that is all that was illustrated.
+   *     - We currently support "exactly_one" and "zero_or_one" directly under "match_set" and
+   *       "instruction_set" because that was all that was illustrated.
+   *     - In both the above cases, I believe we accept JSON which would not be a valid TTP and
+   *       might need to add extra validation. This is true elswhere as well.
+   *
+   *     - "all" is only used in one example under "flow_mod_types" in the middle of page 43
+   *     - "one_or_more" is never illustrated with an example
+   *     - "zero_or_more" sometimes points to an object and sometimes to an array. It seems like it
+   *                      should always do one or the other. Only used under "flow_mod_types" in the
+   *                      example.
+   *     - "exactly_one" examples for "instruction_set" and "match_set"
+   *     - "zero_or_one" is only used in "instruction_set" and only to point to a single object;
+   *                     never to an array. It seems like it should always point to an array, even
+   *                     if it is an array with a single element.
+   *
+   *     - SPEC: It's really unclear how these work. For example, "instruction_set" usually points
+   *             to a list, but at the bottom of page 26 it points to an object with a single
+   *             "exactly_one" list. While at the top of page 27, it points to a list which contains
+   *             an object with a single "zero_or_more" list.
+   *     - SPEC: It's not clear what "optional support" vs. "optional use" meta-member keywords are.
+   *
+   * High-level SPECs:
+   *  => where are (and aren't) universal ttp properties valid?
+   *     - everywhere but lists? this seems the most likely.
    */
 
   namespace "urn:onf:ttp";
@@ -115,8 +147,124 @@ module onf-ttp {
       type string; // REFINE: value for the field being set, e.g., bitmap of the appropriate size,
                    //         or variable name
     }
+  }
+
+  grouping match_set-properties {
+
+    // SPEC: mentions that pre-requisites are assumed even if not listed
+    // SPEC: this implies requirement that explicit pre-reqs that mismatch are illegal
+
+    leaf field {
+      type string; //REFINE: enum oxm_ofb_match_fields string after "OFPXMT_OFB_"
+      // type identityref {
+      //   base oxm:match-field;
+      // }
+    }
+    leaf match_type { // was "wc_type" in older (pre-spec) TTP
+      type enumeration {
+        enum exact; // exact match, as if all mask bits = 1 (also default)
+        enum mask;  // arbitrary mask field allowed for this field
+                    // SPEC: is it clear what happens if no mask present? All 1's?
+        enum prefix; // mask must be contiguous ones from MSB of field (like subnet mask)
+        enum all_or_exact; // field may be omitted, but exact match if present
+      }
+    }
+    leaf mask { // has 1's where must match. Presence and value must agree with match_type
+      type string; // a string representing numbers (dec, hex, etc)
+    }
+    leaf value {
+      type string; // either a variable name or fixed value for the field
+      // REFINE: add pattern to say it's either a string or variable?
+      // SPEC: would be nice if this was easier to specify in a schema
+    }
+    leaf const_mask { // mask for specifying value bits that cannot be varied
+      type string;
+      // SPEC: would be good to have an example! [There is one on the middle of page 24]
+    }
+    leaf const_value { // value used to specify the value of unvarying bits
+      type string;
+
+      // SPEC: seems like const_mask and const_value must come together?
+      // SPEC: const_mask and const_value invalid with "exact" or "all_or_exact"?
+      // SPEC: const_mask and const_value valid with mask...but prefix? Clarify
+    }
+  }
+
+  grouping instruction_set-properties {
+    uses universal-TTP-properties;
+    leaf instruction {
+    type string; //REFINE: enum ofp_instruction_type string after "OFPIT_"
+
+    // Perhaps come back to this approach?
+    // type identityref {
+    //   base oft:instruction-base;
+    // }
+    }
+    leaf table {
+      type string; //REFINE: should be the name of a table defined here
+    }
+    leaf metadata {
+      type uint64; //SPEC: is this an integer in JSON or a string storing a 64-bit value?
+    }
+    leaf metadata_mask {
+      type uint64; //SPEC: is this an integer in JSON or a string storing a 64-bit value?
+    }
+    list actions {
+      uses action-properties;
+    }
     leaf meter_name {
       type string;
+      // SPEC: this belongs in "instruction_set" not in "actions"
+    }
+  }
+
+  grouping flow_mod-properties {
+    uses universal-TTP-properties;
+    leaf priority {
+      description
+        "Must have exactly one of priority or priority_rank. Integer greater than zero, or an
+         integer range of the form \"n..m\" where n and m are integers with 0 < n < m.";
+      type string; //REFINE: add pattern for integer or integer range
+
+      // TODO: all flow_mod_type entries must select the same one of priority and priority_rank
+      // SPEC: how to schema the constraints on priority?
+    }
+    leaf priority_rank {
+      description
+        "Must have exactly one of priority or priority_rank. An integer greater than zero
+         indicating relative priority of flow_mod_types.";
+      type string; // strings that represent numbers
+
+      // SPEC: priority ranks must be unique within flow table?
+      // SPEC: priority-rank is incompatible with built-in-flow-mods
+      // SPEC: That is, cannot be used in the same flow table (see below)
+    }
+    list match_set {
+      // NOTE: in the ODL version, this *must* be a list (in the spec it can also be a singleton)
+      uses match_set-properties;
+      list exactly_one {
+        uses match_set-properties;
+      }
+      list zero_or_one {
+        uses match_set-properties;
+      }
+    }
+    list instruction_set {
+      // NOTE: in the ODL version, this *must* be a list (in the spec it can also be a singleton)
+      description "A list of the instructions possible. Can also optionally include lists of
+                   other instructions in the \"exactly_one\" and \"zero_or_one\" lists.";
+      uses instruction_set-properties;
+      list exactly_one {
+        uses instruction_set-properties;
+      }
+      list zero_or_one {
+        uses instruction_set-properties;
+      }
+      // TODO: I think the intention is to be ale to specify multiple entries for exactly_one
+      //       as well as zero_or_one, but this gives one list. We could do a list of lists, but
+      //       the inner lists wouldn't be anonymous.
+      // SPEC: The spec says this is an array, but there are examples where it is not, e.g., the
+      //       bottom of page 26.
     }
   }
 
@@ -154,9 +302,11 @@ module onf-ttp {
       key name;
       leaf name {
         type string;
+        mandatory true;
       }
       leaf number {
         type uint8;
+        mandatory true;
       }
       //SPEC: you can't do what is there in YANG, maybe put name in the tables in flow_tables?
     }
@@ -208,120 +358,44 @@ module onf-ttp {
     }
 
     list flow_tables {
-      //TODO: can inner types also have the univ TTP properties?
       uses universal-TTP-properties;
       list flow_mod_types {
-        uses universal-TTP-properties;
-        leaf priority {  // priority or priority rank allowed
-                         // must have one, not 0 or >1... how to express?
-                         // if one flow_mod has priority, all must have?
-                         // if one flow_mod has priority_rank, all must have?
-                         // SPEC: how to schema the constraints on priority?
-          type string; // can hold numbers or ranges... how to express?
-                       // SPEC: describes as "integer"
-                       // really is a string that can hold int or int range
+        uses flow_mod-properties;
+        list all {
+          uses flow_mod-properties;
         }
-        leaf priority_rank {
-          type string; // strings that represent numbers
-                       // SPEC: priority ranks must be unique within flow table?
-                       // SPEC: priority-rank is incompatible with built-in-flow-mods
-                       // SPEC: That is, cannot be used in the same flow table (see below)
+        list one_or_more {
+          uses flow_mod-properties;
         }
-        list match_set { // SPEC: mentions that pre-requisites are assumed even if not listed
-                         // SPEC: this implies requirement that explicit pre-reqs that mismatch are illegal
-          leaf field {
-            type identityref {
-              base oxm:match-field;
-            }
-          }
-          leaf match_type { // was "wc_type" in older (pre-spec) TTP
-            type enumeration {
-              enum exact; // exact match, as if all mask bits = 1 (also default)
-              enum mask;  // arbitrary mask field allowed for this field
-                          // SPEC: is it clear what happens if no mask present? All 1's?
-              enum prefix; // mask must be contiguous ones from MSB of field (like subnet mask)
-              enum all_or_exact; // field may be omitted, but exact match if present
-              //TODO: are there more? [Curt: these are all enums in match_type... DONE]
-            }
-          }
-          leaf mask { // has 1's where must match. Presence and value must agree with match_type
-            type string; // a string representing numbers (dec, hex, etc)
-          }
-          leaf value {
-            type string; // either a variable name or fixed value for the field
-                         // SPEC: how to express in schema that numbers are allowed, or var names from list
-          }
-          leaf const_mask { // mask for specifying value bits that cannot be varied
-            type string;    // SPEC: would be good to have an example!
-          }
-          leaf const_value { // value used to specify the value of unvarying bits
-                             // SPEC: seems like const_mask and const_value must come together?
-                             // SPEC: const_mask and const_value invalid with "exact" or "all_or_exact"?
-                             // SPEC: const_mask and const_value valid with mask...but prefix? Clarify
-            type string;
-          }
-        }
-        container instruction_set {  // why is inst_set a container, but match_set not?
-          list exactly_one {
-            list option { //TODO: this should be an anonymous list, but I don't know how
-              leaf instruction {
-                type identityref {
-                  base oft:instruction-base;
-                }
-              }
-              //TODO: need a leaf for the conditional instruction parameters
-            }
-          }
+        list zero_or_more {
+          uses flow_mod-properties;
         }
       }
-      list built_in_flow_mods { // SPEC: says "usually are flow_mods that ..."  Usually? Always?
-                             // built-ins are flow_mods, not just templates like flow_mod_types
-                             // so the allowed fields are similar
-                             // can we leverage similarity, or do we need to repeat the fields?
-                             // as flow-mod-types get more complex, leverage is important
-        uses universal-TTP-properties;
-        leaf priority { // SPEC: Only "priority" allowed for built-ins? (rank doesn't work?)
-                        // SPEC: (rank doesn't work because implies "specified later")
-                        // SPEC: if built-in and flow-mod-types are defined for same table...
-                        // SPEC: and if "priority" is required for built-in, then...
-                        // SPEC: then flow-mod-types in same table must be "priority" (not rank)
-          type string; // can hold numbers or ranges... how to express?
-        }
-        list match_set { // SPEC: mentions that pre-requisites are assumed even if not listed
-                         // SPEC: this implies requirement that explicit pre-reqs that mismatch are illegal
-          leaf field {
-            type identityref {
-              base oxm:match-field;
-            }
-          }
-          // SPEC: for built-in flow mods, these are not templates (constraints), but actual flow mods
-          // SPEC: for flow mod, match type is expressed, not described...
-          // SPEC: as such, "match_type" seems pointless?  Or maybe "prefix"
-          // SPEC: const_value and const_mask meaningless
-          leaf mask { // has 1's where must match.
-            type string; // a string representing numbers (dec, hex, etc)
-          }
-          leaf value { // SPEC: for built-in flow mod, this is required, must be a number
-            type string;
-          }
-        }
-        container instruction_set {  // why is inst_set a container, but match_set not?
-          list exactly_one {
-            list option { //TODO: this should be an anonymous list, but I don't know how
-              leaf instruction {
-                type identityref {
-                  base oft:instruction-base;
-                }
-              }
-              //TODO: need a leaf for the conditional instruction parameters
-            }
-          }
-        }
+      list built_in_flow_mods {
+         uses flow_mod-properties;
+
+         // SPEC: says "usually are flow_mods that ..."  Usually? Always?
+
+         // built-ins are flow_mods, not just templates like flow_mod_types
+         // so the allowed fields are similar
+         // can we leverage similarity, or do we need to repeat the fields?
+         // as flow-mod-types get more complex, leverage is important
+
+         // SPEC: Only "priority" allowed for built-ins? (rank doesn't work?) (rank doesn't work
+         //       because implies "specified later")
+         // SPEC: if built-in and flow-mod-types are defined for same table...
+         //       and if "priority" is required for built-in, then...
+         //       then flow-mod-types in same table must be "priority" (not rank)
+
+         // SPEC: For built-in flow mods, these are not templates (constraints), but actual flow
+         //       mods. For flow mod, match type is expressed, not described as such, "match_type"
+         //       seems pointless?  Or maybe "prefix"? const_value and const_mask meaningless
       }
       list table_subsets {
-        uses universal-TTP-properties; // "name" is a required field, used as alias
-        list subset {
-           anon string;  // unnamed list of strings that must be names of flow-mod-types in table
+        uses universal-TTP-properties; //REFINE: "name" is a required field, used as alias
+        leaf-list subset {
+           type string;
+           //REFINE: should be "MISS", a flow_mod_type name or a "built_in_flow_mod" name
         }
       }
     }
@@ -352,8 +426,8 @@ module onf-ttp {
       uses type-property;
       leaf default {
         type union {
-          type string;
           type uint32;
+          type string;
           //TODO: is this sufficient?
           //SPEC: this seems ambiguous in the spec
         }
