@@ -35,7 +35,7 @@ module onf-ttp {
   grouping opt-tag-property {
     description "denotes strings that represent optional functionality in the TTP";
 
-    leaf opt-tag {
+    leaf opt_tag {
       type string;
     }
   }
@@ -83,6 +83,41 @@ module onf-ttp {
 
     uses type-property;
     uses universal-TTP-properties;
+  }
+
+  grouping action-properties {
+    uses universal-TTP-properties;
+    leaf action {
+      type string;
+      // REFINE: enum ofp_action_type string after "OFPAT_"
+    }
+    leaf port {
+      type string; // REFINE: port number or variable name or reserved port name (enum ofp_port_no
+                   //         string after "OFPP_")
+    }
+    leaf group_id {
+      type string; // TODO: or number?
+    }
+    leaf queue_id {
+      type string; // TODO: or number?
+    }
+    leaf ttl {
+      description "MPLS or IP TTL";
+      type string;
+    }
+    leaf ethertype {
+      type string; // TODO: or number?
+    }
+    leaf field {
+      type string; // REFINE: enum oxm_ofb_match_fields string after "OFPXMT_OFB_"
+    }
+    leaf value {
+      type string; // REFINE: value for the field being set, e.g., bitmap of the appropriate size,
+                   //         or variable name
+    }
+    leaf meter_name {
+      type string;
+    }
   }
 
   grouping table-type-pattern-properties {
@@ -155,13 +190,19 @@ module onf-ttp {
         leaf meter_id {
           type uint32; //borrowed from OF spec
         }
-        leaf rate {
-          type uint32;
-          //REFINE: right int?
+        leaf type {
+          type string;
+          //REFINE: should be enum ofp_meter_band_type string after "OFPMBT_"
         }
-        leaf burst {
-          type uint32;
-          //REFINE: right int?
+        list bands {
+          leaf rate {
+            type uint32;
+            //REFINE: right int?
+          }
+          leaf burst {
+            type uint32;
+            //REFINE: right int?
+          }
         }
       }
     }
@@ -287,12 +328,23 @@ module onf-ttp {
 
     list group_entry_types {
       uses universal-TTP-properties;
-      //TODO: model
+      leaf group_type {
+        type string; // REFINE: enum ofp_group_type string after "OFPGT_"
+      }
+      list bucket_types {
+        uses universal-TTP-properties;
+        list action_set {
+          uses action-properties;
+        }
+      }
     }
 
     list packet_out {
       uses universal-TTP-properties;
-      //TODO: model
+      list actions {
+        uses action-properties;
+      }
+      //SPEC: no examples in the spec and text is ambiguous
     }
 
     list parameters {

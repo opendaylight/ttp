@@ -146,7 +146,6 @@
       <dependency>
         <groupId>org.jboss.resteasy</groupId>
         <artifactId>jaxrs-api</artifactId>
-        <version>3.0.4.Final</version> <!-- TODO: this should move to old-parent -->
       </dependency>
       <dependency>
         <groupId>junit</groupId>
@@ -156,6 +155,13 @@
       <dependency>
         <groupId>com.google.code.gson</groupId>
         <artifactId>gson</artifactId>
+        <scope>test</scope>
+      </dependency>
+      <dependency>
+         <groupId>org.skyscreamer</groupId>
+         <artifactId>jsonassert</artifactId>
+         <version>1.2.3</version> <!-- TODO: this should move to odlparent -->
+         <scope>test</scope>
       </dependency>
 
     </dependencies>
