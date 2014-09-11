@@ -21,8 +21,10 @@ module onf-ttp {
    *       "flow_mod_types" because that is all that was illustrated.
    *     - We currently support "exactly_one" and "zero_or_one" directly under "match_set" and
    *       "instruction_set" because that was all that was illustrated.
-   *     - In both the above cases, I believe we accept JSON which would not be a valid TTP and
-   *       might need to add extra validation. This is true elswhere as well.
+   *     - We currently support "exactly_one" and "zero_or_one" for action lists, i.e., actions in
+   *       instructions_set, action_set in bucket_type, and actions in packet_out
+   *     - In all the above cases, I believe we accept JSON which would not be a valid TTP and
+   *       might need to add extra validation. This is true elsewhere as well.
    *
    *     - "all" is only used in one example under "flow_mod_types" in the middle of page 43
    *     - "one_or_more" is never illustrated with an example
@@ -151,11 +153,23 @@ module onf-ttp {
     }
   }
 
+  // possible bug in yangtools? using this works, but pasting it's content where it's used fails
+  grouping action-zero-exactly-one-properties {
+    uses action-properties;
+    list exactly_one {
+      uses action-properties;
+    }
+    list zero_or_one {
+      uses action-properties;
+    }
+  }
+
   grouping match_set-properties {
 
     // SPEC: mentions that pre-requisites are assumed even if not listed
     // SPEC: this implies requirement that explicit pre-reqs that mismatch are illegal
 
+    uses universal-TTP-properties;
     leaf field {
       type string; //REFINE: enum oxm_ofb_match_fields string after "OFPXMT_OFB_"
       // type identityref {
@@ -212,7 +226,7 @@ module onf-ttp {
       type uint64; //SPEC: is this an integer in JSON or a string storing a 64-bit value?
     }
     list actions {
-      uses action-properties;
+      uses action-zero-exactly-one-properties;
     }
     leaf meter_name {
       type string;
@@ -410,7 +424,7 @@ module onf-ttp {
       list bucket_types {
         uses universal-TTP-properties;
         list action_set {
-          uses action-properties;
+          uses action-zero-exactly-one-properties;
         }
       }
     }
@@ -418,7 +432,7 @@ module onf-ttp {
     list packet_out {
       uses universal-TTP-properties;
       list actions {
-        uses action-properties;
+        uses action-zero-exactly-one-properties;
       }
       //SPEC: no examples in the spec and text is ambiguous
     }
