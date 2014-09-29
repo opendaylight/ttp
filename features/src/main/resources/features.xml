@@ -12,6 +12,7 @@
 
     <!-- Karaf Features repositories that TTP depends on -->
     <repository>mvn:org.opendaylight.yangtools/features-yangtools/${yangtools.version}/xml/features</repository>
+    <repository>mvn:org.opendaylight.controller/features-restconf/${controller.version}/xml/features</repository>
     <!-- We currently don't use this
     <repository>mvn:org.opendaylight.openflowjava/features-openflowjava/${openflowjava.version}/xml/features</repository>
     -->
@@ -19,6 +20,7 @@
     <!-- TTP "all" feature -->
     <feature name='odl-ttp-all' version='${project.version}' description='OpenDaylight :: ttp :: All'>
         <feature version='${project.version}'>odl-ttp-model</feature>
+        <feature version='${project.version}'>odl-ttp-model-rest</feature>
     </feature>
 
     <!-- TTP Model feature -->
@@ -30,6 +32,14 @@
         -->
         <bundle>mvn:org.opendaylight.ttp/ttp-model/${project.version}</bundle>
         <bundle>mvn:org.opendaylight.controller.model/model-inventory/${controller.version}</bundle>
+    </feature>
+
+    <!-- TTP Model feature -->
+    <feature name='odl-ttp-model-rest' version='${project.version}' description='OpenDaylight :: ttp :: Model'>
+        <feature version='${project.version}'>odl-ttp-model</feature>
+        <feature version='${controller.version}'>odl-mdsal-apidocs</feature>
+        <feature version='${controller.version}'>odl-restconf</feature>
+        <feature version='${controller.version}'>odl-mdsal-broker</feature>
     </feature>
 
     <!--

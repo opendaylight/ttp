@@ -37,6 +37,14 @@
          <type>xml</type>
          <scope>compile</scope>
       </dependency>
+      <dependency>
+         <groupId>org.opendaylight.controller</groupId>
+         <artifactId>features-restconf</artifactId>
+         <version>${controller.version}</version>
+         <classifier>features</classifier>
+         <type>xml</type>
+         <scope>compile</scope>
+      </dependency>
       <!-- We currently don't use this
       <dependency>
          <groupId>org.opendaylight.openflowjava</groupId>
