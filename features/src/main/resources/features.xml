@@ -46,7 +46,7 @@
 
         * Basic MD-SAL Provider
         <feature name='odl-ttp-provider' version='${project.version}' description='OpenDaylight :: ttp :: Provider '>
-            <feature version='1.1-SNAPSHOT'>odl-mdsal-broker</feature>
+            <feature version='1.1-Helium'>odl-mdsal-broker</feature>
             <feature version='${project.version}'>odl-ttp-model</feature>
             <bundle>mvn:org.opendaylight.ttp/ttp-provider/${project.version}</bundle>
             ... whatever other bundles you need
@@ -54,15 +54,15 @@
 
         * Basic MD-SAL Model feature
         <feature name='odl-ttp-model' version='${project.version}' description='OpenDaylight :: ttp :: Model'>
-            <feature version='0.6.2-SNAPSHOT'>odl-yangtools-binding</feature>
-            <feature version='0.6.2-SNAPSHOT'>odl-yangtools-models</feature>
+            <feature version='0.6.2-Helium'>odl-yangtools-binding</feature>
+            <feature version='0.6.2-Helium'>odl-yangtools-models</feature>
             <bundle>mvn:org.opendaylight.ttp/ttp-model/${project.version}</bundle>
             ... whatever other bundles you need
         </feature>
 
         * Config Subsystem example - the config file is your config subsystem configuration
         <feature name='odl-ttp-provider' version='${project.version}' description='OpenDaylight :: ttp :: Provider'>
-            <feature version='1.1-SNAPSHOT'>odl-mdsal-broker</feature>
+            <feature version='1.1-Helium'>odl-mdsal-broker</feature>
             <bundle>mvn:org.opendaylight.ttp/ttp-provider/${project.version}</bundle>
             <configfile finalname="etc/opendaylight/karaf/80-ttp.xml">mvn:org.opendaylight.ttp/ttp-config/${project.version}/xml/config</configfile>
             ... whatever other bundles you need
@@ -70,7 +70,7 @@
 
         * Basic MD-SAL Provider that uses openflowplugin-flow-services (which brings along odl-mdsal-broker)
         <feature name='odl-ttp-provider' version='${project.version}' description='OpenDaylight :: ttp :: Provider'>
-            <feature version='0.0.3-SNAPSHOT'>odl-openflowplugin-flow-services</feature>
+            <feature version='0.0.3-Helium'>odl-openflowplugin-flow-services</feature>
             <bundle>mvn:org.opendaylight.ttp/ttp-provider/${project.version}</bundle>
             ... whatever other bundles you need
         </feature>
