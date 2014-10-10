@@ -4,7 +4,7 @@
     <parent>
         <artifactId>ttp-parent</artifactId>
         <groupId>org.opendaylight.ttp</groupId>
-        <version>0.0.1-SNAPSHOT</version>
+        <version>0.1.0-SNAPSHOT</version>
     </parent>
     <artifactId>ttp-model</artifactId>
     <packaging>bundle</packaging>
@@ -134,7 +134,7 @@
       <dependency>
         <groupId>org.opendaylight.yangtools.model</groupId>
         <artifactId>yang-ext</artifactId>
-        <version>2013.09.07.4-SNAPSHOT</version> <!-- explicitly not ${yangtools.version} -->
+        <version>2013.09.07.7-SNAPSHOT</version> <!-- explicitly not ${yangtools.version} -->
       </dependency>
 
       <!-- Controller Dependencies -->
