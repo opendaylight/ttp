@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>org.opendaylight.ttp</groupId>
+    <artifactId>ttp-parent</artifactId>
+    <version>0.1.0-SNAPSHOT</version>
+    <relativePath>../</relativePath>
+  </parent>
+  <artifactId>utils</artifactId>
+  <packaging>jar</packaging>
+
+  <dependencies>
+    <!-- for web application exception -->
+    <dependency>
+      <groupId>org.jboss.resteasy</groupId>
+      <artifactId>jaxrs-api</artifactId>
+      <!-- <scope>test</scope>  -->
+    </dependency>
+
+    <!-- for binding independent, i.e., JSON/XML conversion -->
+    <dependency>
+      <artifactId>sal-binding-broker-impl</artifactId>
+      <groupId>org.opendaylight.controller</groupId>
+      <version>${controller.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opendaylight.controller</groupId>
+      <artifactId>sal-rest-connector</artifactId>
+      <version>${controller.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>${bundle.plugin.version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-Activator>org.opendaylight.l2switch.L2SwitchProvider</Bundle-Activator>
+          </instructions>
+          <manifestLocation>${project.build.directory}/META-INF</manifestLocation>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

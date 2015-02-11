@@ -20,7 +20,6 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-bundle-plugin</artifactId>
-                <version>${bundle.plugin.version}</version>
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
@@ -174,9 +173,13 @@
       <dependency>
          <groupId>org.skyscreamer</groupId>
          <artifactId>jsonassert</artifactId>
-         <version>1.2.3</version> <!-- TODO: this should move to odlparent -->
          <scope>test</scope>
       </dependency>
 
+      <dependency>
+          <groupId>org.opendaylight.ttp</groupId>
+          <artifactId>utils</artifactId>
+          <version>${project.version}</version>
+      </dependency>
     </dependencies>
 </project>
