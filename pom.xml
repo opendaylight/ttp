@@ -51,58 +51,6 @@
     -->
   </properties>
 
-  <pluginRepositories>
-    <!-- OpenDayLight Repo Mirror -->
-    <pluginRepository>
-      <id>opendaylight-mirror</id>
-      <name>opendaylight-mirror</name>
-      <url>${nexusproxy}/groups/public/</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </pluginRepository>
-    <!-- OpenDayLight Snapshot artifact -->
-    <pluginRepository>
-      <id>opendaylight-snapshot</id>
-      <name>opendaylight-snapshot</name>
-      <url>${nexusproxy}/repositories/opendaylight.snapshot/</url>
-      <snapshots>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </pluginRepository>
-  </pluginRepositories>
-
-  <repositories>
-    <!-- OpenDayLight Repo Mirror -->
-    <repository>
-      <id>opendaylight-mirror</id>
-      <name>opendaylight-mirror</name>
-      <url>${nexusproxy}/groups/public/</url>
-      <snapshots>
-         <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <updatePolicy>never</updatePolicy>
-      </releases>
-    </repository>
-    <!-- OpenDayLight Snapshot artifact -->
-    <repository>
-      <id>opendaylight-snapshot</id>
-      <name>opendaylight-snapshot</name>
-      <url>http://nexus.opendaylight.org/content/repositories/opendaylight.snapshot</url>
-      <snapshots>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-  </repositories>
-
   <scm>
     <connection>scm:git:ssh://git.opendaylight.org:29418/ttp.git</connection>
     <developerConnection>scm:git:ssh://git.opendaylight.org:29418/ttp.git</developerConnection>
