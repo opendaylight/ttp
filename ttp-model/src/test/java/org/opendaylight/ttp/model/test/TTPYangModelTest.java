@@ -24,6 +24,7 @@ import org.junit.Test;
 import org.opendaylight.controller.sal.rest.impl.StructuredDataToJsonProvider;
 import org.opendaylight.controller.sal.rest.impl.StructuredDataToXmlProvider;
 import org.opendaylight.controller.sal.restconf.impl.StructuredData;
+import org.opendaylight.ttp.utils.TTPUtils;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.MatchSetProperties.MatchType;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.flow_mod.properties.InstructionSet;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.flow_mod.properties.InstructionSetBuilder;
@@ -131,22 +132,8 @@ public class TTPYangModelTest {
 
     @BeforeClass
     public static void oneTimeSetup() {
-        System.out.println("Building context");
-        context = getSchemaContext();
-        System.out.println("Context built");
-        System.out.println("Building mapping service");
-        mappingService = new RuntimeGeneratedMappingServiceImpl(ClassPool.getDefault());
-        ((RuntimeGeneratedMappingServiceImpl)mappingService).onGlobalContextUpdated(context);
-        System.out.println("Mapping service built");
-    }
-
-    static final SchemaContext getSchemaContext() {
-        Iterable<YangModuleInfo> moduleInfos;
-        // TODO: make this load fewer things
-        moduleInfos = BindingReflections.loadModuleInfos();
-        ModuleInfoBackedContext moduleContext = ModuleInfoBackedContext.create();
-        moduleContext.addModuleInfos(moduleInfos);
-        return moduleContext.tryToCreateSchemaContext().get();
+        context = TTPUtils.getSchemaContext();
+        mappingService = TTPUtils.getMappingService(context);
     }
 
     /*
@@ -174,7 +161,7 @@ public class TTPYangModelTest {
          * test NDM_metadata slug XML conversion via Document and Document writers
          */
         System.out.println("Generating document");
-        Document doc = documentFromDataObject(NDMmeta);
+        Document doc = documentFromDataObject(NDMmeta, mappingService);
         System.out.println("Generated document");
 
         System.out.println("Formatted XML From Document:");
@@ -187,7 +174,7 @@ public class TTPYangModelTest {
          * test NDM_metadata slug XML conversion via StructuredDataToXmlProvider
          */
         ByteArrayOutputStream s = new ByteArrayOutputStream();
-        StructuredData sd = structuredDataFromDataObject(NDMmeta);
+        StructuredData sd = TTPUtils.structuredDataFromDataObject(NDMmeta, mappingService, context);
         // ignore all the nulls
         StructuredDataToXmlProvider.INSTANCE.writeTo(sd, null, null, null, null, null, s);
         System.out.println("Formatted XML From StructuredDataToXmlProvider:");
@@ -463,53 +450,12 @@ public class TTPYangModelTest {
         Parameters param2 = new ParametersBuilder().setDefault(new Default("RandomString")).setName("string").build();
         System.out.println("Param1.default:\n  "+param1.getDefault()+"\nParam2.default:\n  "+param2.getDefault());
         TableTypePattern ttp = new TableTypePatternBuilder().setParameters(Arrays.asList(param1, param2)).build();
-        System.out.println("Schema: "+getSchemaNodeForDataObject(context, ttp));
-        System.out.println("XXXYYY:\n"+jsonStringFromDataObject(ttp));
-    }
-
-    /**
-     * DON'T CALL THIS IN PRODUCTION CODE EVER!!! UNTIL IT IS FIXED!
-     * <p/>
-     * Return the {@link DataSchemaNode}
-     *
-     * @param context
-     * @param d
-     * @deprecated
-     */
-    public DataSchemaNode getSchemaNodeForDataObject(SchemaContext context, DataObject d) {
-        QName qn = BindingReflections.findQName(d.getClass());
-
-        Set<DataSchemaNode> allTheNodes = getAllTheNode(context);
-
-        // TODO: create a map to make this faster!!!!
-        for ( DataSchemaNode dsn : allTheNodes ) {
-            if(dsn instanceof DataNodeContainer) {
-                allTheNodes.addAll(((DataNodeContainer)dsn).getChildNodes());
-            }
-            if (dsn.getQName().equals(qn)) {
-                return dsn;
-            }
-        }
-        return null;
-    }
-
-    public Set<DataSchemaNode> getAllTheNode(SchemaContext context) {
-        Set<DataSchemaNode> nodes = new HashSet<DataSchemaNode>();
-        getAllTheNodesHelper(context, nodes);
-        return nodes;
-    }
-
-    private void getAllTheNodesHelper(DataNodeContainer dcn, Set<DataSchemaNode> nodes) {
-        for ( DataSchemaNode dsn : dcn.getChildNodes() ) {
-            if (dsn instanceof DataNodeContainer){
-                getAllTheNodesHelper((DataNodeContainer)dsn, nodes);
-            }
-            nodes.add(dsn);
-        }
+        System.out.println("Schema: "+TTPUtils.getSchemaNodeForDataObject(context, ttp));
+        System.out.println("XXXYYY:\n"+TTPUtils.jsonStringFromDataObject(ttp, mappingService, context));
     }
 
     private void assertConvertedJSONEquals(String expectedJson, DataObject data) throws Exception {
-        String jsonString = jsonStringFromDataObject(data);
+        String jsonString = TTPUtils.jsonStringFromDataObject(data, mappingService, context);
 
         JsonElement je = jp.parse(expectedJson);
         String prettyExpectedJson = gson.toJson(je);
@@ -550,8 +496,8 @@ public class TTPYangModelTest {
      * @param data
      * @return
      */
-    public Document documentFromDataObject(DataObject data) {
-        return documentFromCompositeNode(compositeNodeFromDataObject(data));
+    public Document documentFromDataObject(DataObject data, BindingIndependentMappingService mappingService) {
+        return documentFromCompositeNode(TTPUtils.compositeNodeFromDataObject(data, mappingService));
     }
 
     /**
@@ -563,71 +509,4 @@ public class TTPYangModelTest {
         return XmlDocumentUtils.toDocument(compNode, XmlUtils.DEFAULT_XML_CODEC_PROVIDER);
     }
 
-    /**
-     *
-     * @param d
-     * @return
-     */
-    public CompositeNode compositeNodeFromDataObject(DataObject d) {
-        return mappingService.toDataDom(d);
-    }
-
-    /**
-     *
-     * @param compNode
-     * @return
-     */
-//    private StructuredData structuredDataFromCompositeNode(CompositeNode compNode) {
-//        // Create structured data, the null is an unused mountpoint
-//        // final true/false is to turn on/off pretty printing
-//        DataSchemaNode NDM_metadata = null;
-//        //first solution
-//        NDM_metadata = getSchemaNodeForDataObject(context, null);
-//        //second solution
-//        ControllerContext controllerContext = ControllerContext.getInstance();
-//        controllerContext.setSchemas(context);
-//        InstanceIdWithSchemaNode iiAndSchema = controllerContext.toInstanceIdentifier("/onf-ttp:opendaylight-ttps/table-type-patterns/table-type-pattern/NDM_metadata");
-//        NDM_metadata = iiAndSchema.getSchemaNode();
-//
-//        return new StructuredData(compNode, NDM_metadata, null, true);
-//    }
-
-    /**
-     *
-     * @param d
-     * @return
-     */
-    public StructuredData structuredDataFromDataObject(DataObject d) {
-        DataSchemaNode NDM_metadata = null;
-        NDM_metadata = getSchemaNodeForDataObject(context, d);
-        return new StructuredData(compositeNodeFromDataObject(d), NDM_metadata, null, true);
-    }
-
-    /**
-     *
-     * @param d
-     * @return
-     * @throws WebApplicationException
-     * @throws IOException
-     */
-    public String jsonStringFromStructuredData(StructuredData d) throws WebApplicationException, IOException{
-        ByteArrayOutputStream s = new ByteArrayOutputStream();
-        StructuredDataToJsonProvider.INSTANCE.writeTo(d, null, null, null, null, null, s);
-        return s.toString();
-    }
-
-    /**
-     * Converts a {@link DataObject} to a JSON representation in a string using the relevant YANG
-     * schema if it is present. This defaults to using a {@link SchemaContextListener} if running an
-     * OSGi environment or {@link BindingReflections#loadModuleInfos()} if run while not in an OSGi
-     * environment or if the schema isn't available via {@link SchemaContextListener}.
-     *
-     * @param d
-     * @return
-     * @throws WebApplicationException
-     * @throws IOException
-     */
-    public String jsonStringFromDataObject(DataObject d) throws WebApplicationException, IOException{
-        return jsonStringFromStructuredData(structuredDataFromDataObject(d));
-    }
 }

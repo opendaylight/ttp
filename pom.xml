@@ -18,6 +18,7 @@
 
   <modules>
     <module>parser</module>
+    <module>utils</module>
     <module>ttp-model</module>
     <module>features</module>
     <module>distribution-karaf</module>
