@@ -1,64 +1,60 @@
 package org.opendaylight.ttp.utils;
 
-import java.io.ByteArrayOutputStream;
+import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
 import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.ws.rs.WebApplicationException;
-
 import javassist.ClassPool;
-
-import org.opendaylight.controller.sal.rest.impl.StructuredDataToJsonProvider;
-import org.opendaylight.controller.sal.restconf.impl.StructuredData;
+import javax.ws.rs.WebApplicationException;
+import org.opendaylight.yangtools.binding.data.codec.gen.impl.StreamWriterGenerator;
+import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
 import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleInfoBackedContext;
-import org.opendaylight.yangtools.sal.binding.generator.impl.RuntimeGeneratedMappingServiceImpl;
+import org.opendaylight.yangtools.sal.binding.generator.util.BindingRuntimeContext;
+import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils;
+import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataObject;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
+import org.opendaylight.yangtools.yang.binding.InstanceIdentifier.PathArgument;
 import org.opendaylight.yangtools.yang.binding.YangModuleInfo;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
 import org.opendaylight.yangtools.yang.common.QName;
-import org.opendaylight.yangtools.yang.data.api.CompositeNode;
-import org.opendaylight.yangtools.yang.data.impl.codec.BindingIndependentMappingService;
+import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.codec.gson.JSONNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
 import org.opendaylight.yangtools.yang.model.api.DataSchemaNode;
 import org.opendaylight.yangtools.yang.model.api.SchemaContext;
+import org.opendaylight.yangtools.yang.model.api.SchemaContextListener;
+import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public class TTPUtils {
 
-    public static final SchemaContext getSchemaContext() {
+    private SchemaContext context;
+    private BindingRuntimeContext bindingContext;
+    private BindingNormalizedNodeCodecRegistry codecRegistry;
+
+    public TTPUtils(Iterable<? extends YangModuleInfo> moduleInfos) {
         System.out.println("Building context");
-        Iterable<YangModuleInfo> moduleInfos;
-        // TODO: make this load fewer things
-        moduleInfos = BindingReflections.loadModuleInfos();
-        ModuleInfoBackedContext moduleContext = ModuleInfoBackedContext.create();
+        final ModuleInfoBackedContext moduleContext = ModuleInfoBackedContext.create();
         moduleContext.addModuleInfos(moduleInfos);
-        SchemaContext ret = moduleContext.tryToCreateSchemaContext().get();
+        context =  moduleContext.tryToCreateSchemaContext().get();
         System.out.println("Context built");
-        return ret;
-    }
 
-    /**
-     *
-     * @param d
-     * @return
-     * @throws WebApplicationException
-     * @throws IOException
-     */
-    public static final String jsonStringFromStructuredData(StructuredData d)
-            throws WebApplicationException, IOException {
-        ByteArrayOutputStream s = new ByteArrayOutputStream();
-        StructuredDataToJsonProvider.INSTANCE.writeTo(d, null, null, null, null, null, s);
-        return s.toString();
-    }
+        System.out.println("Building Binding Context");
+        bindingContext = BindingRuntimeContext.create(moduleContext, context);
 
-    public static final BindingIndependentMappingService getMappingService(SchemaContext context) {
-        context = getSchemaContext();
-        System.out.println("Building mapping service");
-        BindingIndependentMappingService mappingService = new RuntimeGeneratedMappingServiceImpl(
-                ClassPool.getDefault());
-        ((RuntimeGeneratedMappingServiceImpl) mappingService).onGlobalContextUpdated(context);
+        System.out.println("Building Binding Codec Factory");
+        final BindingNormalizedNodeCodecRegistry bindingStreamCodecs = new BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(JavassistUtils.forClassPool(ClassPool.getDefault())));
+        bindingStreamCodecs.onBindingRuntimeContextUpdated(bindingContext);
+        codecRegistry = bindingStreamCodecs;
         System.out.println("Mapping service built");
-        return mappingService;
+        // TODO Auto-generated constructor stub
+    }
+
+    public final SchemaContext getSchemaContext() {
+        return context;
     }
 
     /**
@@ -67,28 +63,31 @@ public class TTPUtils {
      * OSGi environment or {@link BindingReflections#loadModuleInfos()} if run while not in an OSGi
      * environment or if the schema isn't available via {@link SchemaContextListener}.
      *
-     * @param d
+     * @param object
      * @return
      * @throws WebApplicationException
      * @throws IOException
      */
-    public static final String jsonStringFromDataObject(DataObject d,
-            BindingIndependentMappingService mappingService, SchemaContext context)
-            throws WebApplicationException, IOException {
-        return jsonStringFromStructuredData(structuredDataFromDataObject(d, mappingService, context));
-    }
+    public final String jsonStringFromDataObject(InstanceIdentifier<?> path, DataObject object) {
+            final SchemaPath scPath = SchemaPath.create(FluentIterable.from(path.getPathArguments()).transform(new Function<PathArgument, QName>() {
 
-    /**
-     *
-     * @param d
-     * @return
-     */
-    public static final StructuredData structuredDataFromDataObject(DataObject d,
-            BindingIndependentMappingService mappingService, SchemaContext context) {
-        DataSchemaNode NDM_metadata = null;
-        NDM_metadata = getSchemaNodeForDataObject(context, d);
-        return new StructuredData(compositeNodeFromDataObject(d, mappingService), NDM_metadata,
-                null, true);
+                @Override
+                public QName apply(final PathArgument input) {
+                    return BindingReflections.findQName(input.getType());
+                }
+
+            }), true);
+
+            final Writer writer = new StringWriter();
+            final NormalizedNodeStreamWriter domWriter = JSONNormalizedNodeStreamWriter.create(context, scPath.getParent(), scPath.getLastComponent().getNamespace(), writer);
+            final BindingStreamEventWriter bindingWriter = codecRegistry.newWriter(path, domWriter);
+
+            try {
+                codecRegistry.getSerializer(path.getTargetType()).serialize(object, bindingWriter);
+            } catch (final IOException e) {
+                throw new IllegalStateException(e);
+            }
+            return writer.toString();
     }
 
     public static final Set<DataSchemaNode> getAllTheNode(SchemaContext context) {
@@ -115,6 +114,7 @@ public class TTPUtils {
      * @param d
      * @deprecated
      */
+    @Deprecated
     public static final DataSchemaNode getSchemaNodeForDataObject(SchemaContext context,
             DataObject d) {
         QName qn = BindingReflections.findQName(d.getClass());
@@ -131,16 +131,6 @@ public class TTPUtils {
             }
         }
         return null;
-    }
-
-    /**
-     *
-     * @param d
-     * @return
-     */
-    public static final CompositeNode compositeNodeFromDataObject(DataObject d,
-            BindingIndependentMappingService mappingSerivce) {
-        return mappingSerivce.toDataDom(d);
     }
 
 }
