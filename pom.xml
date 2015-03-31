@@ -31,8 +31,6 @@
     <yangtools.version>0.7.0-SNAPSHOT</yangtools.version>
     <openflowjava.version>0.6.0-SNAPSHOT</openflowjava.version>
     <controller.version>1.2.0-SNAPSHOT</controller.version>
-    <ietf-yang-types.version>2010.09.24.7-SNAPSHOT</ietf-yang-types.version>
-    <ietf-inet-types.version>2010.09.24.7-SNAPSHOT</ietf-inet-types.version>
 
     <!-- these are borrowed from odlparent
     <maven.compile.plugin.version>2.5.1</maven.compile.plugin.version>
