@@ -32,8 +32,6 @@
     <yangtools.version>0.7.0-SNAPSHOT</yangtools.version>
     <openflowjava.version>0.6.0-SNAPSHOT</openflowjava.version>
     <controller.version>1.2.0-SNAPSHOT</controller.version>
-    <ietf-yang-types.version>2010.09.24.7-SNAPSHOT</ietf-yang-types.version>
-    <ietf-inet-types.version>2010.09.24.7-SNAPSHOT</ietf-inet-types.version>
 
     <!-- these are borrowed from odlparent
     <maven.compile.plugin.version>2.5.1</maven.compile.plugin.version>
@@ -59,23 +57,6 @@
     <tag>HEAD</tag>
     <url>https://wiki.opendaylight.org/view/Table_Type_Patterns:Main</url>
   </scm>
-
-  <distributionManagement>
-    <!-- OpenDayLight Released artifact -->
-    <repository>
-      <id>opendaylight-release</id>
-      <url>http://nexus.opendaylight.org/content/repositories/opendaylight.release/</url>
-    </repository>
-    <!-- OpenDayLight Snapshot artifact -->
-    <snapshotRepository>
-      <id>opendaylight-snapshot</id>
-      <url>http://nexus.opendaylight.org/content/repositories/opendaylight.snapshot/</url>
-    </snapshotRepository>
-    <site>
-      <id>${project.artifactId}-site</id>
-      <url>./</url>
-    </site>
-  </distributionManagement>
 
   <build>
     <pluginManagement>
@@ -180,19 +161,6 @@
                     <versionRange>[0.0,)</versionRange>
                     <goals>
                       <goal>set-system-properties</goal>
-                    </goals>
-                  </pluginExecutionFilter>
-                  <action>
-                    <ignore/>
-                  </action>
-                </pluginExecution>
-                <pluginExecution>
-                  <pluginExecutionFilter>
-                    <groupId>org.codehaus.enunciate</groupId>
-                    <artifactId>maven-enunciate-plugin</artifactId>
-                    <versionRange>[0.0,)</versionRange>
-                    <goals>
-                      <goal>docs</goal>
                     </goals>
                   </pluginExecutionFilter>
                   <action>
