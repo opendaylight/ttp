@@ -79,7 +79,6 @@ public class TTPUtils {
      * @param object
      * @return
      * @throws WebApplicationException
-     * @throws IOException
      */
     public final String jsonStringFromDataObject(InstanceIdentifier<?> path, DataObject object) {
         return jsonStringFromDataObject(path, object, false);
@@ -94,7 +93,6 @@ public class TTPUtils {
      * @param object
      * @return
      * @throws WebApplicationException
-     * @throws IOException
      */
     public final String jsonStringFromDataObject(InstanceIdentifier<?> path, DataObject object, boolean pretty) {
             final SchemaPath scPath = SchemaPath.create(FluentIterable.from(path.getPathArguments()).transform(new Function<PathArgument, QName>() {
@@ -151,7 +149,7 @@ public class TTPUtils {
 
     /**
      * DON'T CALL THIS IN PRODUCTION CODE EVER!!! UNTIL IT IS FIXED!
-     * <p/>
+     * <p>
      * Return the {@link DataSchemaNode}
      *
      * @param context
