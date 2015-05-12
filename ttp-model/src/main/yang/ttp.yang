@@ -153,14 +153,32 @@ module onf-ttp {
     }
   }
 
+  grouping action-all-properties{
+    uses action-properties;
+    list all {
+      uses action-properties;
+    }
+    list one_or_more {
+      uses action-properties;
+    }
+  }
+
   // possible bug in yangtools? using this works, but pasting it's content where it's used fails
   grouping action-zero-exactly-one-properties {
     uses action-properties;
     list exactly_one {
-      uses action-properties;
+      uses action-all-properties;
     }
     list zero_or_one {
-      uses action-properties;
+      uses action-all-properties;
+    }
+
+    //TODO: are these two allowed here?
+    list zero_or_more {
+      uses action-all-properties;
+    }
+    list one_or_more {
+      uses action-all-properties;
     }
   }
 
@@ -300,10 +318,27 @@ module onf-ttp {
         type string;
       }
 
-      //TODO: figure out how/if we want to include extensions
-      //SPEC: need an example for how an extension will be specified
+      leaf id {
+        type string;
+      }
+      leaf type {
+        type enumeration {
+          enum field;
+          enum inst;
+          enum action;
+          enum error;
+        }
+      }
+      leaf exp_id {
+        type string; //TODO: is this a string?
+                     //SPEC: not state what this is.
+      }
+      leaf exp_code {
+        type string; //TODO: is this a string?
+                     //SPEC: not state what this is.
+      }
 
-      //SPEC: should be clearer about Varibles vs. Identifiers
+      //SPEC: should be clearer about Variables vs. Identifiers
     }
 
     list features {
