@@ -60,7 +60,7 @@ public class Main {
                 break;
             case "validate":
                 if (args.length != 2) {
-                    System.out.println("<cmd> validate <ttp-file>                    // check the syntax of the ttp");    
+                    System.out.println("<cmd> validate <ttp-file>                    // check the syntax of the ttp");
                 }
                 else {
                     System.out.println("About to stream in the ttp file: "+ args[1]);
@@ -69,7 +69,7 @@ public class Main {
                     String count;
                     String ttpCore = "";
                     while((count = d.readLine()) != null){
-                        ttpCore = ttpCore.concat(count);
+                        ttpCore = ttpCore.concat(count+"\n");
                     }
                     d.close();
 
