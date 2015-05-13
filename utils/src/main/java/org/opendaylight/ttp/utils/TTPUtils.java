@@ -27,8 +27,10 @@ import org.opendaylight.yangtools.yang.common.QName;
 import org.opendaylight.yangtools.yang.data.api.YangInstanceIdentifier;
 import org.opendaylight.yangtools.yang.data.api.schema.NormalizedNode;
 import org.opendaylight.yangtools.yang.data.api.schema.stream.NormalizedNodeStreamWriter;
+import org.opendaylight.yangtools.yang.data.codec.gson.JSONCodecFactory;
 import org.opendaylight.yangtools.yang.data.codec.gson.JSONNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.codec.gson.JsonParserStream;
+import org.opendaylight.yangtools.yang.data.codec.gson.JsonWriterFactory;
 import org.opendaylight.yangtools.yang.data.impl.schema.ImmutableNormalizedNodeStreamWriter;
 import org.opendaylight.yangtools.yang.data.impl.schema.NormalizedNodeResult;
 import org.opendaylight.yangtools.yang.model.api.DataNodeContainer;
@@ -105,8 +107,11 @@ public class TTPUtils {
             }), true);
 
             final Writer writer = new StringWriter();
-            // ignore pretty for now
-            final NormalizedNodeStreamWriter domWriter = JSONNormalizedNodeStreamWriter.create(context, scPath.getParent(), scPath.getLastComponent().getNamespace(), writer);
+            final NormalizedNodeStreamWriter domWriter;
+            if(pretty)
+                domWriter = JSONNormalizedNodeStreamWriter.createExclusiveWriter(JSONCodecFactory.create(context), scPath.getParent(), scPath.getLastComponent().getNamespace(), JsonWriterFactory.createJsonWriter(writer,2));
+            else
+                domWriter = JSONNormalizedNodeStreamWriter.createExclusiveWriter(JSONCodecFactory.create(context), scPath.getParent(), scPath.getLastComponent().getNamespace(), JsonWriterFactory.createJsonWriter(writer));
             final BindingStreamEventWriter bindingWriter = codecRegistry.newWriter(path, domWriter);
 
             try {
