@@ -77,12 +77,13 @@
           <version>${checkstyle.version}</version>
           <configuration>
             <failsOnError>true</failsOnError>
+            <violationSeverity>error</violationSeverity> <!-- change to warning as we get better -->
             <configLocation>controller/checkstyle.xml</configLocation>
             <consoleOutput>true</consoleOutput>
             <includeTestSourceDirectory>true</includeTestSourceDirectory>
             <sourceDirectory>${project.basedir}</sourceDirectory>
             <includes>**\/*.java,**\/*.yang,**\/*.xml,**\/*.ini,**\/*.sh,**\/*.bat</includes>
-            <excludes>**\/target\/,**\/bin\/,**\/target-ide\/,\/,**\/xtend-gen\/,**\/yang-gen-sal\/</excludes>
+            <excludes>**\/target\/,**\/bin\/,**\/target-ide\/,**\/xtend-gen\/,**\/yang-gen-sal\/</excludes>
           </configuration>
           <dependencies>
             <dependency>
@@ -266,6 +267,5 @@
       </plugin>
     </plugins>
   </build>
-
 
 </project>
