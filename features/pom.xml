@@ -11,7 +11,7 @@
    <parent>
       <artifactId>ttp-parent</artifactId>
       <groupId>org.opendaylight.ttp</groupId>
-      <version>0.1.0-Lithium</version>
+      <version>0.1.1-SNAPSHOT</version>
       <relativePath>../</relativePath>
    </parent>
    <artifactId>features-ttp</artifactId>
@@ -21,10 +21,10 @@
       <features.file>features.xml</features.file>
       <!-- Optional TODO: Move these properties to your parent pom and possibly
             DependencyManagement section of your parent pom -->
-      <branding.version>1.1.0-Lithium</branding.version>
-      <karaf.resources.version>1.5.0-Lithium</karaf.resources.version>
-      <feature.test.version>1.5.0-Lithium</feature.test.version>
-      <karaf.empty.version>1.5.0-Lithium</karaf.empty.version>
+      <branding.version>1.1.1-SNAPSHOT</branding.version>
+      <karaf.resources.version>1.5.1-SNAPSHOT</karaf.resources.version>
+      <feature.test.version>1.5.1-SNAPSHOT</feature.test.version>
+      <karaf.empty.version>1.5.1-SNAPSHOT</karaf.empty.version>
    </properties>
    <dependencies>
       <dependency>
@@ -78,14 +78,14 @@
         <dependency>
           <groupId>org.opendaylight.controller</groupId>
           <artifactId>features-mdsal</artifactId>
-          <version>1.2.0-Lithium</version>
+          <version>1.2.1-SNAPSHOT</version>
           <classifier>features</classifier>
           <type>xml</type>
         </dependency>
         <dependency>
           <groupId>org.opendaylight.openflowplugin</groupId>
           <artifactId>features-openflowplugin</artifactId>
-          <version>0.1.0-Lithium</version>
+          <version>0.1.1-SNAPSHOT</version>
           <classifier>features</classifier>
           <type>xml</type>
         </dependency>
