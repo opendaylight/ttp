@@ -19,8 +19,6 @@ import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.flow_mod.properties.In
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.flow_mod.properties.instruction_set.ExactlyOne;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.flow_mod.properties.instruction_set.ZeroOrOne;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.opendaylight.ttps.table.type.patterns.TableTypePattern;
-import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.NDMMetadata;
-import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.NDMMetadataBuilder;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.FlowTables;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.flow_tables.FlowModTypes;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.flow_tables.BuiltInFlowMods;
@@ -186,7 +184,7 @@ public class Main {
                             System.out.println("adding goto_table to table dests " + flowTable.getName() + "," + gotoTable.getTable());
                             dests.add(dest);
                         }
-                        
+
                     }
                 }
             }
@@ -225,7 +223,7 @@ public class Main {
                             System.out.println("adding goto_table to table dests " + flowTable.getName() + "," + gotoTable.getTable());
                             dests.add(dest);
                         }
-                        
+
                     }
                 }
             }
@@ -254,7 +252,7 @@ public class Main {
         }
         recurse++;
         Path = Path.concat(tableName);
-//	System.out.println("nextFlowPathHop called, table= " + tableName + " recurse= " + recurse);
+//  System.out.println("nextFlowPathHop called, table= " + tableName + " recurse= " + recurse);
         for (FlowTables flowTable : ttp.getFlowTables()) {
             if (flowTable.getName().equals(tableName)) {
                 tableNameValid = true;
@@ -268,48 +266,48 @@ public class Main {
                     }
                     for (InstructionSet ins : fmt.getInstructionSet()) {
                         if (ins.getInstruction() != null) {
-		            if (ins.getInstruction().equalsIgnoreCase("goto_table")) {
+                    if (ins.getInstruction().equalsIgnoreCase("goto_table")) {
                                 gotGoTo = true;
-	                        String destName = ins.getTable();
+                            String destName = ins.getTable();
                                 if (!dests.contains(destName)) {
                                     dests.add(destName);
                                     nextFlowPathHop(ttp, Path.concat(" -> "), destName, recurse);
                                 }
-		            }
-	                }
-	                if (ins.getExactlyOne() != null) {
-		            for (ExactlyOne eo : ins.getExactlyOne()) {
-		                if (eo.getInstruction().equalsIgnoreCase("goto_table")) {
+                    }
+                    }
+                    if (ins.getExactlyOne() != null) {
+                    for (ExactlyOne eo : ins.getExactlyOne()) {
+                        if (eo.getInstruction().equalsIgnoreCase("goto_table")) {
                                     gotGoTo = true;
-	                            String destName = eo.getTable();
+                                String destName = eo.getTable();
                                     if (!dests.contains(destName)) {
                                         dests.add(destName);
                                         nextFlowPathHop(ttp, Path.concat(" -> "), destName, recurse);
                                     }
-		                }
-		            }
-	                }
-	                if (ins.getZeroOrOne() != null) {
-		            for (ZeroOrOne zoo : ins.getZeroOrOne()) {
-		                if (zoo.getInstruction().equalsIgnoreCase("goto_table")) {
+                        }
+                    }
+                    }
+                    if (ins.getZeroOrOne() != null) {
+                    for (ZeroOrOne zoo : ins.getZeroOrOne()) {
+                        if (zoo.getInstruction().equalsIgnoreCase("goto_table")) {
                                     gotGoTo = true;
-	                            String destName = zoo.getTable();
+                                String destName = zoo.getTable();
                                     if (!dests.contains(destName)) {
                                         dests.add(destName);
                                         nextFlowPathHop(ttp, Path.concat(" -> "), destName, recurse);
                                     }
-		                }
-		            }
-	                }
+                        }
+                    }
+                    }
 
-		    }
+            }
                     if (!gotGoTo) {
                         if (!dests.contains("__NOGOTO__")) {
                             dests.add("__NOGOTO__");
                             System.out.println(Path);
                         }
                     }
-	        }
+            }
                 if (fmtCount == 0) {
                     System.out.println(Path + "[LAST TABLE has no FMTs!]");
                 }
@@ -322,49 +320,49 @@ public class Main {
                     }
                     for (InstructionSet ins : bifm.getInstructionSet()) {
                         if (ins.getInstruction() != null) {
-		            if (ins.getInstruction().equalsIgnoreCase("goto_table")) {
+                    if (ins.getInstruction().equalsIgnoreCase("goto_table")) {
                                 gotGoTo = true;
-	                        String destName = ins.getTable();
+                            String destName = ins.getTable();
                                 if (!dests.contains(destName)) {
                                     dests.add(destName);
                                     nextFlowPathHop(ttp, Path.concat(" -> "), destName, recurse);
                                 }
-		            }
-	                }
-	                if (ins.getExactlyOne() != null) {
-		            for (ExactlyOne eo : ins.getExactlyOne()) {
-		                if (eo.getInstruction().equalsIgnoreCase("goto_table")) {
+                    }
+                    }
+                    if (ins.getExactlyOne() != null) {
+                    for (ExactlyOne eo : ins.getExactlyOne()) {
+                        if (eo.getInstruction().equalsIgnoreCase("goto_table")) {
                                     gotGoTo = true;
-	                            String destName = eo.getTable();
+                                String destName = eo.getTable();
                                     if (!dests.contains(destName)) {
                                         dests.add(destName);
                                         nextFlowPathHop(ttp, Path.concat(" -> "), destName, recurse);
                                     }
-		                }
-		            }
-	                }
-	                if (ins.getZeroOrOne() != null) {
-		            for (ZeroOrOne zoo : ins.getZeroOrOne()) {
-		                if (zoo.getInstruction().equalsIgnoreCase("goto_table")) {
+                        }
+                    }
+                    }
+                    if (ins.getZeroOrOne() != null) {
+                    for (ZeroOrOne zoo : ins.getZeroOrOne()) {
+                        if (zoo.getInstruction().equalsIgnoreCase("goto_table")) {
                                     gotGoTo = true;
-	                            String destName = zoo.getTable();
+                                String destName = zoo.getTable();
                                     if (!dests.contains(destName)) {
                                         dests.add(destName);
                                         nextFlowPathHop(ttp, Path.concat(" -> "), destName, recurse);
                                     }
-		                }
-		            }
-	                }
+                        }
+                    }
+                    }
 
-		    }
+            }
                     if (!gotGoTo) {
                         if (!dests.contains("__NOGOTO__")) {
                             dests.add("__NOGOTO__");
                             System.out.println(Path);
                         }
                     }
-	        }
-	    }
+            }
+        }
         }
         if (!tableNameValid) {
             System.out.println(Path + " [LAST TABLE NOT FOUND!]");
