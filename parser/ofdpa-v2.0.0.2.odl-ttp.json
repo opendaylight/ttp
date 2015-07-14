@@ -1174,7 +1174,7 @@
       ]
     },
     {
-      "name": "Tunnel PCP Trust",
+      "name": "Tunnel DSCP Trust",
       "doc": [
         "Classify traffic class and color based on VLAN PCP field."
       ],
@@ -2429,7 +2429,7 @@
           "instruction_set": [
             {
               "instruction": "GOTO_TABLE",
-              "table": "MPLS L2  Port DSCP Trust"
+              "table": "MPLS L2 Port DSCP Trust"
             },
             {
               "instruction": "APPLY_ACTIONS",
@@ -2505,7 +2505,7 @@
           "instruction_set": [
             {
               "instruction": "GOTO_TABLE",
-              "table": "MPLS L2  Port DSCP Trust"
+              "table": "MPLS L2 Port DSCP Trust"
             },
             {
               "instruction": "APPLY_ACTIONS",
@@ -2576,7 +2576,7 @@
           "instruction_set": [
             {
               "instruction": "GOTO_TABLE",
-              "table": "MPLS L2  Port PCP Trust"
+              "table": "MPLS L2 Port PCP Trust"
             },
             {
               "instruction": "APPLY_ACTIONS",
@@ -2654,7 +2654,7 @@
                 },
                 {
                   "instruction": "GOTO_TABLE",
-                  "table": "PolicyACL"
+                  "table": "Policy ACL"
                 }
               ]
             },
@@ -2708,7 +2708,8 @@
             }
           ]
         }
-      ]
+      ],
+      "built_in_flow_mods": []
     },
     {
       "name": "MPLS L2 Port DSCP Trust",
@@ -3885,7 +3886,7 @@
               "zero_or_one": [
                 {
                   "instruction": "GOTO_TABLE",
-                  "table": "PolicyACL"
+                  "table": "Policy ACL"
                 }
               ]
             },
@@ -3972,7 +3973,7 @@
               "zero_or_one": [
                 {
                   "instruction": "GOTO_TABLE",
-                  "table": "PolicyACL"
+                  "table": "Policy ACL"
                 }
               ]
             },
@@ -4077,7 +4078,7 @@
               "zero_or_one": [
                 {
                   "instruction": "GOTO_TABLE",
-                  "table": "PolicyACL"
+                  "table": "Policy ACL"
                 }
               ]
             },
@@ -4543,7 +4544,7 @@
               "zero_or_one": [
                 {
                   "instruction": "GOTO_TABLE",
-                  "table": "PolicyACL"
+                  "table": "Policy ACL"
                 }
               ]
             },
@@ -5885,7 +5886,7 @@
           "instruction_set": [
             {
               "instruction": "GOTO_TABLE",
-              "table": "MPLS 2"
+              "table": "MPLS 3"
             },
             {
               "instruction": "APPLY_ACTIONS",
@@ -5972,7 +5973,7 @@
               "zero_or_one": [
                 {
                   "instruction": "GOTO_TABLE",
-                  "table": "PolicyACL"
+                  "table": "Policy ACL"
                 }
               ]
             },
@@ -6059,7 +6060,7 @@
               "zero_or_one": [
                 {
                   "instruction": "GOTO_TABLE",
-                  "table": "PolicyACL"
+                  "table": "Policy ACL"
                 }
               ]
             },
@@ -6164,7 +6165,7 @@
               "zero_or_one": [
                 {
                   "instruction": "GOTO_TABLE",
-                  "table": "PolicyACL"
+                  "table": "Policy ACL"
                 }
               ]
             },
@@ -6275,7 +6276,7 @@
           "instruction_set": [
             {
               "instruction": "GOTO_TABLE",
-              "table": "MPLS 2"
+              "table": "MPLS 3"
             },
             {
               "instruction": "APPLY_ACTIONS",
@@ -6630,7 +6631,7 @@
               "zero_or_one": [
                 {
                   "instruction": "GOTO_TABLE",
-                  "table": "PolicyACL"
+                  "table": "Policy ACL"
                 }
               ]
             },
@@ -9886,7 +9887,8 @@
         "Actions based on packet color.",
         "Must be separate from L2 Policer table."
       ],
-      "flow_mod_types": []
+      "flow_mod_types": [],
+      "built_in_flow_mods": []
     },
     {
       "name": "Policy ACL",
