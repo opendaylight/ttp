@@ -2708,8 +2708,7 @@
             }
           ]
         }
-      ],
-      "built_in_flow_mods": []
+      ]
     },
     {
       "name": "MPLS L2 Port DSCP Trust",
@@ -9887,8 +9886,7 @@
         "Actions based on packet color.",
         "Must be separate from L2 Policer table."
       ],
-      "flow_mod_types": [],
-      "built_in_flow_mods": []
+      "flow_mod_types": []
     },
     {
       "name": "Policy ACL",

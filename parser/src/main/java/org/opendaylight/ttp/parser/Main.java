@@ -28,8 +28,8 @@ import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.flow_mod.properties.in
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.flow_mod.properties.instruction_set.ZeroOrOne;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.opendaylight.ttps.table.type.patterns.TableTypePattern;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.FlowTables;
-import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.flow_tables.FlowModTypes;
 import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.flow_tables.BuiltInFlowMods;
+import org.opendaylight.yang.gen.v1.urn.onf.ttp.rev140711.table.type.pattern.properties.flow_tables.FlowModTypes;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
 import org.opendaylight.yangtools.yang.binding.util.BindingReflections;
@@ -156,83 +156,14 @@ public class Main {
         Map<String, List<String>> legalTableHops = new HashMap<>();
         for (FlowTables flowTable : ttp.getFlowTables()) {
             List<String> dests = new ArrayList<>();
-            for (FlowModTypes fmt : flowTable.getFlowModTypes()) {// ft.getFlowModTypes()) {
-                for (InstructionSet ins : fmt.getInstructionSet()) {
-
-                    // get all the goto_table instructions even if they are in meta keywords
-                    List<InstructionSetProperties> gotoTables = new ArrayList<>();
-                    if (ins.getInstruction() != null) {
-                        if (ins.getInstruction().equalsIgnoreCase("goto_table")) {
-                            gotoTables.add(ins);
-                        }
-                    }
-                    if (ins.getExactlyOne() != null) {
-                        for (ExactlyOne eo : ins.getExactlyOne()) {
-                            if (eo.getInstruction().equalsIgnoreCase("goto_table")) {
-                                gotoTables.add(eo);
-                            }
-                        }
-                    }
-                    if (ins.getZeroOrOne() != null) {
-                        for (ZeroOrOne zoo : ins.getZeroOrOne()) {
-                            if (zoo.getInstruction().equalsIgnoreCase("goto_table")) {
-                                gotoTables.add(zoo);
-                            }
-                        }
-                    }
-
-
-                    // add a legal hop from the flow table to the action listed in the goto table
-                    for (InstructionSetProperties gotoTable : gotoTables) {
-                        String dest = gotoTable.getTable();
-                        if (dests.contains(dest)) {
-                            System.out.println("dest already in list: " + dest);
-                        }
-                        else {
-                            System.out.println("adding goto_table to table dests " + flowTable.getName() + "," + gotoTable.getTable());
-                            dests.add(dest);
-                        }
-
-                    }
+            if( flowTable.getFlowModTypes() != null ){
+                for (FlowModTypes fmt : flowTable.getFlowModTypes()) {
+                    dests.addAll(getGotoDests(fmt.getInstructionSet(), flowTable));
                 }
             }
-            for (BuiltInFlowMods bifm : flowTable.getBuiltInFlowMods()) {// ft.getFlowModTypes()) {
-                for (InstructionSet ins : bifm.getInstructionSet()) {
-
-                    // get all the goto_table instructions even if they are in meta keywords
-                    List<InstructionSetProperties> gotoTables = new ArrayList<>();
-                    if (ins.getInstruction() != null) {
-                        if (ins.getInstruction().equalsIgnoreCase("goto_table")) {
-                            gotoTables.add(ins);
-                        }
-                    }
-                    if (ins.getExactlyOne() != null) {
-                        for (ExactlyOne eo : ins.getExactlyOne()) {
-                            if (eo.getInstruction().equalsIgnoreCase("goto_table")) {
-                                gotoTables.add(eo);
-                            }
-                        }
-                    }
-                    if (ins.getZeroOrOne() != null) {
-                        for (ZeroOrOne zoo : ins.getZeroOrOne()) {
-                            if (zoo.getInstruction().equalsIgnoreCase("goto_table")) {
-                                gotoTables.add(zoo);
-                            }
-                        }
-                    }
-
-                    // add a legal hop from the flow table to the action listed in the goto table
-                    for (InstructionSetProperties gotoTable : gotoTables) {
-                        String dest = gotoTable.getTable();
-                        if (dests.contains(dest)) {
-                            System.out.println("dest already in list: " + dest);
-                        }
-                        else {
-                            System.out.println("adding goto_table to table dests " + flowTable.getName() + "," + gotoTable.getTable());
-                            dests.add(dest);
-                        }
-
-                    }
+            if (flowTable.getBuiltInFlowMods() != null) {
+                for (BuiltInFlowMods bifm : flowTable.getBuiltInFlowMods()) {
+                    dests.addAll(getGotoDests(bifm.getInstructionSet(), flowTable));
                 }
             }
             if (!dests.isEmpty()) {
@@ -251,130 +182,122 @@ public class Main {
         System.out.println("}");
     }
 
-    static void nextFlowPathHop(TableTypePattern ttp, String Path, String tableName, int recurse) {
-        boolean tableNameValid = false;
+    static List<String> getGotoDests(List<InstructionSet> inslist,
+            FlowTables flowTable) {
+        List<String> dests = new ArrayList<>();
 
-        if (recurse > 12) {
+        for (InstructionSet ins : inslist) {
+
+            // get all the goto_table instructions even if they are in meta
+            // keywords
+            List<InstructionSetProperties> gotoTables = getGotoTables(ins);
+
+            // add a legal hop from the flow table to the action listed in the
+            // goto table
+            for (InstructionSetProperties gotoTable : gotoTables) {
+                String dest = gotoTable.getTable();
+                if (dests.contains(dest)) {
+                    System.out.println("dest already in list: " + dest);
+                } else {
+                    System.out.println("adding goto_table to table dests "
+                            + flowTable.getName() + "," + gotoTable.getTable());
+                    dests.add(dest);
+                }
+            }
+        }
+        return dests;
+    }
+
+    static List<InstructionSetProperties> getGotoTables(InstructionSet ins) {
+        List<InstructionSetProperties> gotoTables = new ArrayList<>();
+
+        if (ins.getInstruction() != null) {
+            if (ins.getInstruction().equalsIgnoreCase("goto_table")) {
+                gotoTables.add(ins);
+            }
+        }
+        if (ins.getExactlyOne() != null) {
+            for (ExactlyOne eo : ins.getExactlyOne()) {
+                if (eo.getInstruction().equalsIgnoreCase("goto_table")) {
+                    gotoTables.add(eo);
+                }
+            }
+        }
+        if (ins.getZeroOrOne() != null) {
+            for (ZeroOrOne zoo : ins.getZeroOrOne()) {
+                if (zoo.getInstruction().equalsIgnoreCase("goto_table")) {
+                    gotoTables.add(zoo);
+                }
+            }
+        }
+        return gotoTables;
+    }
+
+    static void nextFlowPathHop(TableTypePattern ttp, String Path, String tableName, int recurse) {
+        boolean nameFound = false;
+        String noGoTo = "__NOGOTO__";
+
+        if (recurse++ > 12) {
             System.out.println("excessive recursion, Path = " + Path);
             return;
         }
-        recurse++;
+        if (tableName == noGoTo) {
+            System.out.println(Path);
+            return;
+        }
         Path = Path.concat(tableName);
-//  System.out.println("nextFlowPathHop called, table= " + tableName + " recurse= " + recurse);
         for (FlowTables flowTable : ttp.getFlowTables()) {
             if (flowTable.getName().equals(tableName)) {
-                tableNameValid = true;
-                int fmtCount = 0;
-                List<String> dests = new ArrayList<>();
+                nameFound = true;
+//                System.out.println("found " + tableName);
+                Map<String, Integer> destCounts = new HashMap<>();
                 for (FlowModTypes fmt : flowTable.getFlowModTypes()) {
-                    boolean gotGoTo = false;
-                    if (fmtCount++ > 100) {
-                       System.out.println("more than 100 flowmodtypes in a table");
-                       break;
-                    }
                     for (InstructionSet ins : fmt.getInstructionSet()) {
-                        if (ins.getInstruction() != null) {
-                    if (ins.getInstruction().equalsIgnoreCase("goto_table")) {
-                                gotGoTo = true;
-                            String destName = ins.getTable();
-                                if (!dests.contains(destName)) {
-                                    dests.add(destName);
-                                    nextFlowPathHop(ttp, Path.concat(" -> "), destName, recurse);
-                                }
-                    }
-                    }
-                    if (ins.getExactlyOne() != null) {
-                    for (ExactlyOne eo : ins.getExactlyOne()) {
-                        if (eo.getInstruction().equalsIgnoreCase("goto_table")) {
-                                    gotGoTo = true;
-                                String destName = eo.getTable();
-                                    if (!dests.contains(destName)) {
-                                        dests.add(destName);
-                                        nextFlowPathHop(ttp, Path.concat(" -> "), destName, recurse);
-                                    }
+                        List<InstructionSetProperties> gotoTables = getGotoTables(ins);
+                        if (gotoTables.isEmpty()) {
+                            if (!destCounts.containsKey(noGoTo))
+                                destCounts.put(noGoTo,1);
+                            else
+                                destCounts.put(noGoTo, destCounts.get(noGoTo) + 1);
+                        }
+                        for (InstructionSetProperties gotoTable : gotoTables) {
+                            String dest = gotoTable.getTable();
+                            if (destCounts.containsKey(dest))
+                                destCounts.put(dest, destCounts.get(dest) + 1);
+                            else
+                                destCounts.put(dest,1);
                         }
                     }
-                    }
-                    if (ins.getZeroOrOne() != null) {
-                    for (ZeroOrOne zoo : ins.getZeroOrOne()) {
-                        if (zoo.getInstruction().equalsIgnoreCase("goto_table")) {
-                                    gotGoTo = true;
-                                String destName = zoo.getTable();
-                                    if (!dests.contains(destName)) {
-                                        dests.add(destName);
-                                        nextFlowPathHop(ttp, Path.concat(" -> "), destName, recurse);
-                                    }
-                        }
-                    }
-                    }
-
-            }
-                    if (!gotGoTo) {
-                        if (!dests.contains("__NOGOTO__")) {
-                            dests.add("__NOGOTO__");
-                            System.out.println(Path);
-                        }
-                    }
-            }
-                if (fmtCount == 0) {
-                    System.out.println(Path + "[LAST TABLE has no FMTs!]");
                 }
-//                System.out.println("beginning BuiltIns for " + tableName);
-                for (BuiltInFlowMods bifm : flowTable.getBuiltInFlowMods()) {
-                    boolean gotGoTo = false;
-                    if (fmtCount++ > 100) {
-                       System.out.println("more than 100 flowmodtypes and builtins in a table");
-                       break;
-                    }
-                    for (InstructionSet ins : bifm.getInstructionSet()) {
-                        if (ins.getInstruction() != null) {
-                    if (ins.getInstruction().equalsIgnoreCase("goto_table")) {
-                                gotGoTo = true;
-                            String destName = ins.getTable();
-                                if (!dests.contains(destName)) {
-                                    dests.add(destName);
-                                    nextFlowPathHop(ttp, Path.concat(" -> "), destName, recurse);
-                                }
-                    }
-                    }
-                    if (ins.getExactlyOne() != null) {
-                    for (ExactlyOne eo : ins.getExactlyOne()) {
-                        if (eo.getInstruction().equalsIgnoreCase("goto_table")) {
-                                    gotGoTo = true;
-                                String destName = eo.getTable();
-                                    if (!dests.contains(destName)) {
-                                        dests.add(destName);
-                                        nextFlowPathHop(ttp, Path.concat(" -> "), destName, recurse);
-                                    }
+                if (destCounts.isEmpty())
+                    System.out.println(Path + "[LAST TABLE has no FMTs!]");
+                List<BuiltInFlowMods> bifmlist = flowTable.getBuiltInFlowMods();
+                if (bifmlist != null) {
+                    for (BuiltInFlowMods bifm : bifmlist) {
+                        for (InstructionSet ins : bifm.getInstructionSet()) {
+                            List<InstructionSetProperties> gotoTables = getGotoTables(ins);
+                            if (gotoTables.isEmpty()) {
+                                if (!destCounts.containsKey(noGoTo))
+                                    destCounts.put(noGoTo,1);
+                                else
+                                    destCounts.put(noGoTo, destCounts.get(noGoTo) + 1);
+                            }
+                            for (InstructionSetProperties gotoTable : gotoTables) {
+                                String dest = gotoTable.getTable();
+                                if (destCounts.containsKey(dest))
+                                    destCounts.put(dest, destCounts.get(dest) + 1);
+                                else
+                                    destCounts.put(dest,1);
+                            }
                         }
                     }
-                    }
-                    if (ins.getZeroOrOne() != null) {
-                    for (ZeroOrOne zoo : ins.getZeroOrOne()) {
-                        if (zoo.getInstruction().equalsIgnoreCase("goto_table")) {
-                                    gotGoTo = true;
-                                String destName = zoo.getTable();
-                                    if (!dests.contains(destName)) {
-                                        dests.add(destName);
-                                        nextFlowPathHop(ttp, Path.concat(" -> "), destName, recurse);
-                                    }
-                        }
-                    }
-                    }
-
-            }
-                    if (!gotGoTo) {
-                        if (!dests.contains("__NOGOTO__")) {
-                            dests.add("__NOGOTO__");
-                            System.out.println(Path);
-                        }
-                    }
+                }
+                for (String dest : destCounts.keySet())
+                    nextFlowPathHop(ttp, Path.concat(" -> [" + destCounts.get(dest) + "]"), dest, recurse);
             }
         }
-        }
-        if (!tableNameValid) {
-            System.out.println(Path + " [LAST TABLE NOT FOUND!]");
-        }
+        if (!nameFound)
+            System.out.println(Path + " [LAST TABLE NAME NOT FOUND!]");
     }
 
     static void printFlowPaths(TableTypePattern ttp) {
