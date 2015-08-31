@@ -12,7 +12,7 @@
 
     <!-- Karaf Features repositories that TTP depends on -->
     <repository>mvn:org.opendaylight.yangtools/features-yangtools/${yangtools.version}/xml/features</repository>
-    <repository>mvn:org.opendaylight.controller/features-restconf/${controller.version}/xml/features</repository>
+    <repository>mvn:org.opendaylight.netconf/features-restconf/${restconf.version}/xml/features</repository>
     <!-- We currently don't use this
     <repository>mvn:org.opendaylight.openflowjava/features-openflowjava/${openflowjava.version}/xml/features</repository>
     -->
@@ -37,8 +37,8 @@
     <!-- TTP Model feature -->
     <feature name='odl-ttp-model-rest' version='${project.version}' description='OpenDaylight :: ttp :: Model'>
         <feature version='${project.version}'>odl-ttp-model</feature>
-        <feature version='${controller.version}'>odl-mdsal-apidocs</feature>
-        <feature version='${controller.version}'>odl-restconf</feature>
+        <feature version='${restconf.version}'>odl-mdsal-apidocs</feature>
+        <feature version='${restconf.version}'>odl-restconf</feature>
         <feature version='${controller.version}'>odl-mdsal-broker</feature>
     </feature>
 
