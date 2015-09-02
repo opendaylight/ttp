@@ -25,9 +25,9 @@
       <version>${controller.version}</version>
     </dependency>
     <dependency>
-      <groupId>org.opendaylight.controller</groupId>
-      <artifactId>sal-rest-connector</artifactId>
-      <version>${controller.version}</version>
+      <artifactId>yang-data-codec-gson</artifactId>
+      <groupId>org.opendaylight.yangtools</groupId>
+      <version>${yangtools.version}</version>
     </dependency>
   </dependencies>
 
