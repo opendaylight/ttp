@@ -58,7 +58,6 @@ public class Main {
             ttpUtils = new TTPUtils(Collections.singleton(BindingReflections
                     .getModuleInfo(OpendaylightTtps.class)));
         } catch (Exception e) {
-            System.out.println("Exception!");
             throw Throwables.propagate(e);
         }
     }
@@ -69,18 +68,18 @@ public class Main {
             switch (args[0]) {
             default:
             case "help":
-                System.out.println("<cmd> syntax:");
-                System.out.println("<cmd> help                            // print this message");
-                System.out.println("<cmd> format <ttp-file>               // pretty print the ttp to stdout");
-                System.out.println("<cmd> validate <ttp-file>             // check the syntax of the ttp");
-                System.out.println("<cmd> compare <ttp-file1> <ttp-file2> // check 2 ttps for common flow paths");
-                System.out.println("<cmd> dot <ttp-file>                  // generate dot formatted table map graphic to stdout");
-                System.out.println("<cmd> flowpaths <ttp-file>            // generate list of flowpaths in ttp");
+                System.err.println("<cmd> syntax:");
+                System.err.println("<cmd> help                            // print this message");
+                System.err.println("<cmd> format <ttp-file>               // pretty print the ttp to stdout");
+                System.err.println("<cmd> validate <ttp-file>             // check the syntax of the ttp");
+                System.err.println("<cmd> compare <ttp-file1> <ttp-file2> // check 2 ttps for common flow paths");
+                System.err.println("<cmd> dot <ttp-file>                  // generate dot formatted table map graphic to stdout");
+                System.err.println("<cmd> flowpaths <ttp-file>            // generate list of flowpaths in ttp");
                 break;
             case "format":
             case "validate":
                 if (args.length != 2) {
-                    System.out.println("<cmd> "+args[0]+" <ttp-file>                    // check the syntax of the ttp");
+                    System.err.println("<cmd> "+args[0]+" <ttp-file>                    // check the syntax of the ttp");
                 }
                 else {
                     OpendaylightTtps odlTTPs = readTTPFromFile(args[1]);
@@ -89,7 +88,7 @@ public class Main {
                 break;
             case "flowpaths":
                 if (args.length != 2) {
-                    System.out.println("<cmd> "+args[0]+" <ttp-file>                    // check the syntax of the ttp");
+                    System.err.println("<cmd> "+args[0]+" <ttp-file>                    // check the syntax of the ttp");
                 }
                 else {
                     OpendaylightTtps odlTTPs = readTTPFromFile(args[1]);
@@ -98,7 +97,7 @@ public class Main {
                 break;
             case "dot":
                 if (args.length != 2) {
-                    System.out.println("<cmd> "+args[0]+" <ttp-file>                    // check the syntax of the ttp");
+                    System.err.println("<cmd> "+args[0]+" <ttp-file>                    // check the syntax of the ttp");
                 }
                 else {
                     OpendaylightTtps odlTTPs = readTTPFromFile(args[1]);
@@ -106,14 +105,14 @@ public class Main {
                 }
                 break;
             case "compare":
-                System.out.println(args[0]+" not yet written");
+                System.err.println(args[0]+" not yet supported");
                 break;
             }
         }
     }
 
     static OpendaylightTtps readTTPFromFile(String fileName) throws IOException {
-        System.out.println("About to read in the ttp file: "+ fileName);
+        System.err.println("About to read in the ttp file: "+ fileName);
         BufferedReader d = new BufferedReader(new
                 InputStreamReader(new FileInputStream(fileName)));
         String count;
