@@ -15,7 +15,6 @@
       <relativePath>../</relativePath>
    </parent>
    <artifactId>features-ttp</artifactId>
-   <groupId>org.opendaylight.ttp</groupId>
    <packaging>jar</packaging>
    <properties>
       <features.file>features.xml</features.file>
