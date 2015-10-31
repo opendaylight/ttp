@@ -80,13 +80,12 @@ public class TTPUtils {
 
     /**
      * Converts a {@link DataObject} to a JSON representation in a string using the relevant YANG
-     * schema if it is present. This defaults to using a {@link SchemaContextListener} if running an
+     * schema if it is present. This defaults to using a {@link org.opendaylight.yangtools.yang.model.api.SchemaContextListener} if running an
      * OSGi environment or {@link BindingReflections#loadModuleInfos()} if run while not in an OSGi
-     * environment or if the schema isn't available via {@link SchemaContextListener}.
+     * environment or if the schema isn't available via {@link org.opendaylight.yangtools.yang.model.api.SchemaContextListener}.
      *
      * @param object
      * @return
-     * @throws WebApplicationException
      */
     public final String jsonStringFromDataObject(InstanceIdentifier<?> path, DataObject object) {
         return jsonStringFromDataObject(path, object, false);
@@ -94,13 +93,12 @@ public class TTPUtils {
 
         /**
      * Converts a {@link DataObject} to a JSON representation in a string using the relevant YANG
-     * schema if it is present. This defaults to using a {@link SchemaContextListener} if running an
+     * schema if it is present. This defaults to using a {@link org.opendaylight.yangtools.yang.model.api.SchemaContextListener} if running an
      * OSGi environment or {@link BindingReflections#loadModuleInfos()} if run while not in an OSGi
-     * environment or if the schema isn't available via {@link SchemaContextListener}.
+     * environment or if the schema isn't available via {@link org.opendaylight.yangtools.yang.model.api.SchemaContextListener}.
      *
      * @param object
      * @return
-     * @throws WebApplicationException
      */
     public final String jsonStringFromDataObject(InstanceIdentifier<?> path, DataObject object, boolean pretty) {
             final SchemaPath scPath = SchemaPath.create(FluentIterable.from(path.getPathArguments()).transform(new Function<PathArgument, QName>() {

@@ -42,10 +42,10 @@ import com.google.common.base.Throwables;
  * <p>
  * Behavior depends on first argument
  * help                            // print this message");
- * format <ttp-file>               // pretty print the ttp to stdout");
- * validate <ttp-file>             // check the syntax of the ttp");
- * compare <ttp-file1> <ttp-file2> // check 2 ttps for common flow paths");
- * dot <ttp-file>                  // generate dot formatted table map graphic to stdout");
+ * format &lt;ttp-file&gt;               // pretty print the ttp to stdout");
+ * validate &lt;ttp-file&gt;             // check the syntax of the ttp");
+ * compare &lt;ttp-file1&gt; &lt;ttp-file2&gt; // check 2 ttps for common flow paths");
+ * dot &lt;ttp-file&gt;                  // generate dot formatted table map graphic to stdout");
  * <p>
  * @author curtbeckmann
  *
