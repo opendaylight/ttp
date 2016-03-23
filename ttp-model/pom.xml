@@ -4,7 +4,7 @@
     <parent>
         <artifactId>ttp-parent</artifactId>
         <groupId>org.opendaylight.ttp</groupId>
-        <version>0.2.1-SNAPSHOT</version>
+        <version>0.2.1-Beryllium-SR1</version>
     </parent>
     <artifactId>ttp-model</artifactId>
     <packaging>bundle</packaging>
@@ -134,7 +134,7 @@
         <groupId>org.opendaylight.mdsal.model</groupId>
         <artifactId>yang-ext</artifactId>
         <!-- FIXME: Use mdsal-artifacts to determine version -->
-        <version>2013.09.07.8.1-SNAPSHOT</version> <!-- explicitly not ${yangtools.version} -->
+        <version>2013.09.07.8.1-Beryllium-SR1</version> <!-- explicitly not ${yangtools.version} -->
       </dependency>
 
       <!-- Controller Dependencies -->
