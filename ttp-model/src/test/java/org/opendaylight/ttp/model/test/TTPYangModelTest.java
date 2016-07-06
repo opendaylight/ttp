@@ -88,9 +88,11 @@ import org.w3c.dom.ls.LSSerializer;
  * example.
  * <p>
  * There are a few places where the ODL, YANG-modeled TTP differs from the spec including:
+ * <ul>
  * <li> "doc" entries must always be a list of strings and cannot be a single string
  * <li> the table_map format differs significantly
  * <li> in flow_paths, repeated tables are represented as "[table_name]" instead of ["table_name"]
+ * </ul>
  * <p>
  * TODO: test reading from JSON
  */
@@ -424,11 +426,12 @@ public class TTPYangModelTest {
 
     /**
      * DON'T CALL THIS IN PRODUCTION CODE EVER!!! UNTIL IT IS FIXED!
-     * <p/>
+     *
      * Return the {@link DataSchemaNode}
      *
-     * @param context
-     * @param d
+     * @param context SchemaContext
+     * @param d DataObject
+     * @return null
      * @deprecated
      */
     @Deprecated
