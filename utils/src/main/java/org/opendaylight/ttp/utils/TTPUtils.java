@@ -84,8 +84,9 @@ public class TTPUtils {
      * OSGi environment or {@link BindingReflections#loadModuleInfos()} if run while not in an OSGi
      * environment or if the schema isn't available via {@link org.opendaylight.yangtools.yang.model.api.SchemaContextListener}.
      *
-     * @param object
-     * @return
+     * @param path {@literal InstanceIdentifier<?>}
+     * @param object DataObject
+     * @return String
      */
     public final String jsonStringFromDataObject(InstanceIdentifier<?> path, DataObject object) {
         return jsonStringFromDataObject(path, object, false);
@@ -97,8 +98,10 @@ public class TTPUtils {
      * OSGi environment or {@link BindingReflections#loadModuleInfos()} if run while not in an OSGi
      * environment or if the schema isn't available via {@link org.opendaylight.yangtools.yang.model.api.SchemaContextListener}.
      *
-     * @param object
-     * @return
+     * @param path {@literal InstanceIdentifier<?>}
+     * @param object DataObject
+     * @param pretty boolean
+     * @return String
      */
     public final String jsonStringFromDataObject(InstanceIdentifier<?> path, DataObject object, boolean pretty) {
             final SchemaPath scPath = SchemaPath.create(FluentIterable.from(path.getPathArguments()).transform(new Function<PathArgument, QName>() {
@@ -161,8 +164,9 @@ public class TTPUtils {
      * <p>
      * Return the {@link DataSchemaNode}
      *
-     * @param context
-     * @param d
+     * @param context SchemaContext
+     * @param d DataObject
+     * @return DataSchemaNode
      * @deprecated
      */
     @Deprecated
