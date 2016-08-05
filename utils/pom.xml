@@ -5,7 +5,7 @@
     <groupId>org.opendaylight.ttp</groupId>
     <artifactId>ttp-parent</artifactId>
     <version>0.2.4-SNAPSHOT</version>
-    <relativePath>../</relativePath>
+    <relativePath>../ttp-parent</relativePath>
   </parent>
   <artifactId>utils</artifactId>
   <packaging>jar</packaging>

@@ -5,6 +5,7 @@
         <artifactId>ttp-parent</artifactId>
         <groupId>org.opendaylight.ttp</groupId>
         <version>0.2.4-SNAPSHOT</version>
+        <relativePath>../ttp-parent</relativePath>
     </parent>
     <artifactId>ttp-model</artifactId>
     <packaging>bundle</packaging>

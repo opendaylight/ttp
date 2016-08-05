@@ -12,7 +12,7 @@
       <artifactId>ttp-parent</artifactId>
       <groupId>org.opendaylight.ttp</groupId>
       <version>0.2.4-SNAPSHOT</version>
-      <relativePath>../</relativePath>
+      <relativePath>../ttp-parent</relativePath>
    </parent>
    <!-- FIXME: Convert to features-parent -->
    <artifactId>features-ttp</artifactId>
