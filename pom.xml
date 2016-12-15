@@ -5,13 +5,13 @@
   <parent>
     <groupId>org.opendaylight.odlparent</groupId>
     <artifactId>odlparent-lite</artifactId>
-    <version>1.7.2-SNAPSHOT</version>
+    <version>1.7.2-Boron-SR2</version>
     <relativePath/>
   </parent>
 
   <groupId>org.opendaylight.ttp</groupId>
   <artifactId>ttp-root</artifactId>
-  <version>0.3.2-SNAPSHOT</version>
+  <version>0.3.2-Boron-SR2</version>
   <name>ttp</name> <!-- Used by Sonar to set project name -->
   <packaging>pom</packaging>
 
