@@ -9,22 +9,18 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
    <modelVersion>4.0.0</modelVersion>
    <parent>
-      <artifactId>ttp-parent</artifactId>
-      <groupId>org.opendaylight.ttp</groupId>
-      <version>0.4.0-SNAPSHOT</version>
-      <relativePath>../ttp-parent</relativePath>
+      <groupId>org.opendaylight.odlparent</groupId>
+      <artifactId>features-parent</artifactId>
+      <version>1.8.0-SNAPSHOT</version>
+      <relativePath/>
    </parent>
-   <!-- FIXME: Convert to features-parent -->
+   <groupId>org.opendaylight.ttp</groupId>
    <artifactId>features-ttp</artifactId>
+   <version>0.4.0-SNAPSHOT</version>
    <packaging>jar</packaging>
    <properties>
-      <features.file>features.xml</features.file>
-      <!-- Optional TODO: Move these properties to your parent pom and possibly
-            DependencyManagement section of your parent pom -->
-      <branding.version>1.4.0-SNAPSHOT</branding.version>
-      <karaf.resources.version>1.8.0-SNAPSHOT</karaf.resources.version>
-      <feature.test.version>1.8.0-SNAPSHOT</feature.test.version>
-      <karaf.empty.version>1.8.0-SNAPSHOT</karaf.empty.version>
+      <yangtools.version>1.1.0-SNAPSHOT</yangtools.version>
+      <controller.version>1.5.0-SNAPSHOT</controller.version>
       <restconf.version>1.5.0-SNAPSHOT</restconf.version>
       <mdsal.model.version>0.10.0-SNAPSHOT</mdsal.model.version>
    </properties>
@@ -73,154 +69,12 @@
         <artifactId>model-inventory</artifactId>
         <version>${controller.version}</version>
       </dependency>
-
-    <!--
-      Done TODO: Put dependencies on any feature repos
-      you use in your features.xml file.
-
-      Note: they will need to be <type>xml</xml>
-      and <classifier>features</classifier>.
-      One other thing to watch for is to make sure they are
-      <scope>compile</compile>, which they should be by default,
-      but be cautious lest they be at a different scope in a parent pom.
-
-      Examples:
-        <dependency>
-          <groupId>org.opendaylight.controller</groupId>
-          <artifactId>features-mdsal</artifactId>
-          <version>1.5.0-SNAPSHOT</version>
-          <classifier>features</classifier>
-          <type>xml</type>
-        </dependency>
-        <dependency>
-          <groupId>org.opendaylight.openflowplugin</groupId>
-          <artifactId>features-openflowplugin</artifactId>
-          <version>0.4.0-SNAPSHOT</version>
-          <classifier>features</classifier>
-          <type>xml</type>
-        </dependency>
-    -->
-
-    <!--
-      Done TODO: Put dependencies for bundles directly referenced
-      in your features.xml file.  For every <bundle> reference in your
-      features.xml file, you need a corresponding dependency here.
-
-      Examples:
       <dependency>
-        <groupId>org.opendaylight.ttp</groupId>
-        <artifactId>ttp-provider</artifactId>
-        <version>${project.version}</version>
+          <groupId>org.opendaylight.netconf</groupId>
+          <artifactId>sal-rest-docgen</artifactId>
+          <version>${restconf.version}</version>
       </dependency>
-      <dependency>
-        <groupId>org.opendaylight.ttp</groupId>
-        <artifactId>ttp-model</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-    -->
-   <dependency>
-       <groupId>org.opendaylight.netconf</groupId>
-       <artifactId>sal-rest-docgen</artifactId>
-       <version>${restconf.version}</version>
-   </dependency>
-
-    <!--
-      Done TODO: Put dependencies for configfiles directly referenced
-      in your features.xml file.  For every <configfile> reference in your
-      features.xml file, you need a corresponding dependency here.
-
-      Example (presuming here version is coming from the parent pom):
-      <dependency>
-        <groupId>org.opendaylight.ttp</groupId>
-        <artifactId>ttp-config</artifactId>
-        <version>${project.version}</version>
-        <type>xml</type>
-        <classifier>config</classifier>
-      </dependency>
-    -->
-
-    <!-- test to validate features.xml -->
-    <dependency>
-      <groupId>org.opendaylight.odlparent</groupId>
-      <artifactId>features-test</artifactId>
-      <version>${feature.test.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- dependency for opendaylight-karaf-empty for use by testing -->
-    <dependency>
-      <groupId>org.opendaylight.controller</groupId>
-      <artifactId>opendaylight-karaf-empty</artifactId>
-      <version>${karaf.empty.version}</version>
-      <type>zip</type>
-    </dependency>
-    <!-- Uncomment this if you get an error : java.lang.NoSuchMethodError: org.slf4j.helpers.MessageFormatter.format(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)Lorg/slf4j/helpers/FormattingTuple;
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-simple</artifactId>
-      <version>1.7.2</version>
-    </dependency>
-    -->
-
    </dependencies>
-   <build>
-      <resources>
-         <resource>
-            <directory>src/main/resources</directory>
-            <filtering>true</filtering>
-         </resource>
-      </resources>
-      <plugins>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-resources-plugin</artifactId>
-            <executions>
-               <execution>
-                  <id>filter</id>
-                  <phase>generate-resources</phase>
-                  <goals>
-                     <goal>resources</goal>
-                  </goals>
-               </execution>
-            </executions>
-         </plugin>
-         <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>build-helper-maven-plugin</artifactId>
-            <executions>
-               <execution>
-                  <id>attach-artifacts</id>
-                  <phase>package</phase>
-                  <goals>
-                     <goal>attach-artifact</goal>
-                  </goals>
-                  <configuration>
-                     <artifacts>
-                        <artifact>
-                           <file>${project.build.directory}/classes/${features.file}</file>
-                           <type>xml</type>
-                           <classifier>features</classifier>
-                        </artifact>
-                     </artifacts>
-                  </configuration>
-               </execution>
-            </executions>
-         </plugin>
-         <plugin>
-            <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-surefire-plugin</artifactId>
-            <configuration>
-              <systemPropertyVariables>
-                <karaf.distro.groupId>org.opendaylight.controller</karaf.distro.groupId>
-                <karaf.distro.artifactId>opendaylight-karaf-empty</karaf.distro.artifactId>
-                <karaf.distro.version>${karaf.empty.version}</karaf.distro.version>
-              </systemPropertyVariables>
-              <dependenciesToScan>
-               <dependency>org.opendaylight.odlparent:features-test</dependency>
-              </dependenciesToScan>
-            </configuration>
-          </plugin>
-      </plugins>
-   </build>
    <scm>
       <connection>scm:git:ssh://git.opendaylight.org:29418/ttp.git</connection>
       <developerConnection>scm:git:ssh://git.opendaylight.org:29418/ttp.git</developerConnection>
