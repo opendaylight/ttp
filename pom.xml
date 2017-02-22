@@ -26,7 +26,6 @@
     <module>parser</module>
     <module>utils</module>
     <module>ttp-model</module>
-    <module>ttp-parent</module>
     <module>features</module>
     <module>distribution-karaf</module>
   </modules>

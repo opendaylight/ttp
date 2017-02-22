@@ -2,12 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <parent>
-    <groupId>org.opendaylight.ttp</groupId>
-    <artifactId>ttp-parent</artifactId>
-    <version>0.4.0-SNAPSHOT</version>
-    <relativePath>../ttp-parent</relativePath>
+    <groupId>org.opendaylight.odlparent</groupId>
+    <artifactId>odlparent</artifactId>
+    <version>1.8.0-SNAPSHOT</version>
+    <relativePath/>
   </parent>
+  <groupId>org.opendaylight.ttp</groupId>
   <artifactId>utils</artifactId>
+  <version>0.4.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
   <dependencies>
@@ -22,30 +24,14 @@
     <dependency>
       <artifactId>sal-binding-broker-impl</artifactId>
       <groupId>org.opendaylight.controller</groupId>
-      <version>${controller.version}</version>
+      <version>1.5.0-SNAPSHOT</version>
     </dependency>
     <dependency>
       <artifactId>yang-data-codec-gson</artifactId>
       <groupId>org.opendaylight.yangtools</groupId>
-      <version>${yangtools.version}</version>
+      <version>1.1.0-SNAPSHOT</version>
     </dependency>
   </dependencies>
-
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <Bundle-Activator>org.opendaylight.l2switch.L2SwitchProvider</Bundle-Activator>
-          </instructions>
-          <manifestLocation>${project.build.directory}/META-INF</manifestLocation>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 
   <!--
       Maven Site Configuration
