@@ -2,107 +2,63 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>ttp-parent</artifactId>
-        <groupId>org.opendaylight.ttp</groupId>
-        <version>0.4.0-SNAPSHOT</version>
-        <relativePath>../ttp-parent</relativePath>
+        <groupId>org.opendaylight.mdsal</groupId>
+        <artifactId>binding-parent</artifactId>
+        <version>0.10.0-SNAPSHOT</version>
+        <relativePath/>
     </parent>
+    <groupId>org.opendaylight.ttp</groupId>
     <artifactId>ttp-model</artifactId>
+    <version>0.4.0-SNAPSHOT</version>
     <packaging>bundle</packaging>
     <scm>
-      <connection>scm:git:ssh://git.opendaylight.org:29418/controller.git</connection>
-      <developerConnection>scm:git:ssh://git.opendaylight.org:29418/controller.git</developerConnection>
-      <url>https://wiki.opendaylight.org/view/OpenDaylight_Controller:MD-SAL</url>
+      <connection>scm:git:ssh://git.opendaylight.org:29418/ttp.git</connection>
+      <developerConnection>scm:git:ssh://git.opendaylight.org:29418/ttp.git</developerConnection>
       <tag>HEAD</tag>
     </scm>
 
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
-                <extensions>true</extensions>
-                <configuration>
-                    <instructions>
-                        <Bundle-Name>org.opendaylight.ttp.ttp-model-model</Bundle-Name>
-                        <Import-Package>org.opendaylight.yangtools.yang.binding.annotations, *</Import-Package>
-                    </instructions>
-                </configuration>
-            </plugin>
-            <plugin>
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
                 <groupId>org.opendaylight.yangtools</groupId>
-                <artifactId>yang-maven-plugin</artifactId>
-                <version>${yangtools.version}</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>generate-sources</goal>
-                        </goals>
-                        <configuration>
-                            <yangFilesRootDir>src/main/yang</yangFilesRootDir>
-                            <codeGenerators>
-                                <generator>
-                                    <codeGeneratorClass>org.opendaylight.yangtools.maven.sal.api.gen.plugin.CodeGeneratorImpl</codeGeneratorClass>
-                                    <outputBaseDir>${salGeneratorPath}</outputBaseDir>
-                                </generator>
-                            </codeGenerators>
-                            <inspectDependencies>true</inspectDependencies>
-                        </configuration>
-                    </execution>
-                </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.opendaylight.mdsal</groupId>
-                        <artifactId>maven-sal-api-gen-plugin</artifactId>
-                        <version>${mdsal.model.version}</version>
-                        <type>jar</type>
-                    </dependency>
-                </dependencies>
-            </plugin>
-        </plugins>
-        <pluginManagement>
-            <plugins>
-                <!--This plugin's configuration is used to store Eclipse
-                    m2e settings only. It has no influence on the Maven build itself. -->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>1.0.0</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.opendaylight.yangtools</groupId>
-                                        <artifactId>yang-maven-plugin</artifactId>
-                                        <versionRange>[0.5,)</versionRange>
-                                        <goals>
-                                            <goal>generate-sources</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore />
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
-    </build>
-    <dependencies>
+                <artifactId>yangtools-artifacts</artifactId>
+                <version>1.1.0-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.mdsal</groupId>
+                <artifactId>mdsal-artifacts</artifactId>
+                <version>2.2.0-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.mdsal.model</groupId>
+                <artifactId>mdsal-model-artifacts</artifactId>
+                <version>0.10.0-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.opendaylight.controller</groupId>
+                <artifactId>mdsal-artifacts</artifactId>
+                <version>1.5.0-SNAPSHOT</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
 
+    <dependencies>
       <!-- YANG Tools Dependencies -->
       <dependency>
         <groupId>org.opendaylight.mdsal</groupId>
         <artifactId>yang-binding</artifactId>
-        <version>${mdsal.model.version}</version>
       </dependency>
       <dependency>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>yang-common</artifactId>
-        <version>${yangtools.version}</version>
       </dependency>
       <!-- Not using because the TTP spec makes it hard to use prior modeling.
       <dependency>
@@ -124,31 +80,25 @@
       <dependency>
         <groupId>org.opendaylight.mdsal</groupId>
         <artifactId>mdsal-binding-generator-impl</artifactId>
-        <version>${mdsal.model.version}</version>
       </dependency>
       <dependency>
         <groupId>org.opendaylight.yangtools</groupId>
         <artifactId>yang-data-impl</artifactId>
-        <version>${yangtools.version}</version>
       </dependency>
       <dependency>
         <groupId>org.opendaylight.mdsal.model</groupId>
         <artifactId>yang-ext</artifactId>
-        <!-- FIXME: Use mdsal-artifacts to determine version -->
-        <version>2013.09.07.10-SNAPSHOT</version> <!-- explicitly not ${yangtools.version} -->
       </dependency>
 
       <!-- Controller Dependencies -->
       <dependency>
-        <artifactId>sal-binding-broker-impl</artifactId>
         <groupId>org.opendaylight.controller</groupId>
-        <version>${controller.version}</version>
+        <artifactId>sal-binding-broker-impl</artifactId>
       </dependency>
       <!-- To Add a TTP Augmentation to Inventory Nodes -->
       <dependency>
         <groupId>org.opendaylight.controller.model</groupId>
         <artifactId>model-inventory</artifactId>
-        <version>${controller.version}</version>
       </dependency>
 
       <!-- Third Party Libraries -->
