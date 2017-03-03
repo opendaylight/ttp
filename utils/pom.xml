@@ -11,6 +11,9 @@
   <artifactId>utils</artifactId>
   <version>0.4.0-SNAPSHOT</version>
   <packaging>jar</packaging>
+  <!-- <name> formatting is used by autorelease to parse and notify projects on
+       build failure. Please do not modify this unless you have a good reason. -->
+  <name>ODL :: ttp :: ${project.artifactId}</name>
 
   <dependencies>
     <!-- for web application exception -->
