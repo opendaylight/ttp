@@ -11,7 +11,6 @@ package org.opendaylight.ttp.utils;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.gson.stream.JsonReader;
-
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -19,11 +18,11 @@ import java.io.Writer;
 import java.util.HashSet;
 import java.util.Set;
 import javassist.ClassPool;
+import org.opendaylight.mdsal.binding.generator.impl.ModuleInfoBackedContext;
+import org.opendaylight.mdsal.binding.generator.util.BindingRuntimeContext;
+import org.opendaylight.mdsal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yangtools.binding.data.codec.gen.impl.StreamWriterGenerator;
 import org.opendaylight.yangtools.binding.data.codec.impl.BindingNormalizedNodeCodecRegistry;
-import org.opendaylight.yangtools.sal.binding.generator.impl.ModuleInfoBackedContext;
-import org.opendaylight.yangtools.sal.binding.generator.util.BindingRuntimeContext;
-import org.opendaylight.yangtools.sal.binding.generator.util.JavassistUtils;
 import org.opendaylight.yangtools.yang.binding.BindingStreamEventWriter;
 import org.opendaylight.yangtools.yang.binding.DataObject;
 import org.opendaylight.yangtools.yang.binding.InstanceIdentifier;
@@ -47,35 +46,35 @@ import org.opendaylight.yangtools.yang.model.api.SchemaPath;
 
 public class TTPUtils {
 
-    private SchemaContext context;
-    private BindingRuntimeContext bindingContext;
-    private BindingNormalizedNodeCodecRegistry codecRegistry;
+    private final SchemaContext context;
+    private final BindingRuntimeContext bindingContext;
+    private final BindingNormalizedNodeCodecRegistry codecRegistry;
 
     public static final QName TOP_ODL_TTPS_QNAME =
             QName.create("urn:onf:ttp", "2014-07-11", "opendaylight-ttps");
     public static final YangInstanceIdentifier TOP_ODL_TTPS_PATH =
             YangInstanceIdentifier.of(TOP_ODL_TTPS_QNAME);
 
-    public TTPUtils(Iterable<? extends YangModuleInfo> moduleInfos) {
+    public TTPUtils(final Iterable<? extends YangModuleInfo> moduleInfos) {
         System.out.println("Building context");
         final ModuleInfoBackedContext moduleContext = ModuleInfoBackedContext.create();
         moduleContext.addModuleInfos(moduleInfos);
-        context =  moduleContext.tryToCreateSchemaContext().get();
+        this.context =  moduleContext.tryToCreateSchemaContext().get();
         System.out.println("Context built");
 
         System.out.println("Building Binding Context");
-        bindingContext = BindingRuntimeContext.create(moduleContext, context);
+        this.bindingContext = BindingRuntimeContext.create(moduleContext, this.context);
 
         System.out.println("Building Binding Codec Factory");
         final BindingNormalizedNodeCodecRegistry bindingStreamCodecs = new BindingNormalizedNodeCodecRegistry(StreamWriterGenerator.create(JavassistUtils.forClassPool(ClassPool.getDefault())));
-        bindingStreamCodecs.onBindingRuntimeContextUpdated(bindingContext);
-        codecRegistry = bindingStreamCodecs;
+        bindingStreamCodecs.onBindingRuntimeContextUpdated(this.bindingContext);
+        this.codecRegistry = bindingStreamCodecs;
         System.out.println("Mapping service built");
         // TODO Auto-generated constructor stub
     }
 
     public final SchemaContext getSchemaContext() {
-        return context;
+        return this.context;
     }
 
     /**
@@ -88,7 +87,7 @@ public class TTPUtils {
      * @param object DataObject
      * @return String
      */
-    public final String jsonStringFromDataObject(InstanceIdentifier<?> path, DataObject object) {
+    public final String jsonStringFromDataObject(final InstanceIdentifier<?> path, final DataObject object) {
         return jsonStringFromDataObject(path, object, false);
     }
 
@@ -103,7 +102,7 @@ public class TTPUtils {
      * @param pretty boolean
      * @return String
      */
-    public final String jsonStringFromDataObject(InstanceIdentifier<?> path, DataObject object, boolean pretty) {
+    public final String jsonStringFromDataObject(final InstanceIdentifier<?> path, final DataObject object, final boolean pretty) {
             final SchemaPath scPath = SchemaPath.create(FluentIterable.from(path.getPathArguments()).transform(new Function<PathArgument, QName>() {
 
                 @Override
@@ -115,28 +114,29 @@ public class TTPUtils {
 
             final Writer writer = new StringWriter();
             final NormalizedNodeStreamWriter domWriter;
-            if(pretty)
-                domWriter = JSONNormalizedNodeStreamWriter.createExclusiveWriter(JSONCodecFactory.create(context), scPath.getParent(), scPath.getLastComponent().getNamespace(), JsonWriterFactory.createJsonWriter(writer,2));
-            else
-                domWriter = JSONNormalizedNodeStreamWriter.createExclusiveWriter(JSONCodecFactory.create(context), scPath.getParent(), scPath.getLastComponent().getNamespace(), JsonWriterFactory.createJsonWriter(writer));
-            final BindingStreamEventWriter bindingWriter = codecRegistry.newWriter(path, domWriter);
+            if(pretty) {
+                domWriter = JSONNormalizedNodeStreamWriter.createExclusiveWriter(JSONCodecFactory.create(this.context), scPath.getParent(), scPath.getLastComponent().getNamespace(), JsonWriterFactory.createJsonWriter(writer,2));
+            } else {
+                domWriter = JSONNormalizedNodeStreamWriter.createExclusiveWriter(JSONCodecFactory.create(this.context), scPath.getParent(), scPath.getLastComponent().getNamespace(), JsonWriterFactory.createJsonWriter(writer));
+            }
+            final BindingStreamEventWriter bindingWriter = this.codecRegistry.newWriter(path, domWriter);
 
             try {
-                codecRegistry.getSerializer(path.getTargetType()).serialize(object, bindingWriter);
+                this.codecRegistry.getSerializer(path.getTargetType()).serialize(object, bindingWriter);
             } catch (final IOException e) {
                 throw new IllegalStateException(e);
             }
             return writer.toString();
     }
 
-    public static final Set<DataSchemaNode> getAllTheNode(SchemaContext context) {
-        Set<DataSchemaNode> nodes = new HashSet<DataSchemaNode>();
+    public static final Set<DataSchemaNode> getAllTheNode(final SchemaContext context) {
+        final Set<DataSchemaNode> nodes = new HashSet<DataSchemaNode>();
         getAllTheNodesHelper(context, nodes);
         return nodes;
     }
 
-    private static final void getAllTheNodesHelper(DataNodeContainer dcn, Set<DataSchemaNode> nodes) {
-        for (DataSchemaNode dsn : dcn.getChildNodes()) {
+    private static final void getAllTheNodesHelper(final DataNodeContainer dcn, final Set<DataSchemaNode> nodes) {
+        for (final DataSchemaNode dsn : dcn.getChildNodes()) {
             if (dsn instanceof DataNodeContainer) {
                 getAllTheNodesHelper((DataNodeContainer) dsn, nodes);
             }
@@ -149,14 +149,14 @@ public class TTPUtils {
         final NormalizedNodeStreamWriter streamWriter = ImmutableNormalizedNodeStreamWriter.from(result);
         // note: context used to be generated by using loadModules from TestUtils in
         //       org.opendaylight.yangtools.yang.data.codec.gson
-        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, context);
+        final JsonParserStream jsonParser = JsonParserStream.create(streamWriter, this.context);
         jsonParser.parse(new JsonReader(new StringReader(inputJson)));
         final NormalizedNode<?, ?> transformedInput = result.getResult();
         return transformedInput;
     }
 
-    public DataObject dataObjectFromNormalizedNode(NormalizedNode<?, ?> nn) {
-        return codecRegistry.fromNormalizedNode(TOP_ODL_TTPS_PATH, nn).getValue();
+    public DataObject dataObjectFromNormalizedNode(final NormalizedNode<?, ?> nn) {
+        return this.codecRegistry.fromNormalizedNode(TOP_ODL_TTPS_PATH, nn).getValue();
     }
 
     /**
@@ -170,14 +170,14 @@ public class TTPUtils {
      * @deprecated
      */
     @Deprecated
-    public static final DataSchemaNode getSchemaNodeForDataObject(SchemaContext context,
-            DataObject d) {
-        QName qn = BindingReflections.findQName(d.getClass());
+    public static final DataSchemaNode getSchemaNodeForDataObject(final SchemaContext context,
+            final DataObject d) {
+        final QName qn = BindingReflections.findQName(d.getClass());
 
-        Set<DataSchemaNode> allTheNodes = getAllTheNode(context);
+        final Set<DataSchemaNode> allTheNodes = getAllTheNode(context);
 
         // TODO: create a map to make this faster!!!!
-        for (DataSchemaNode dsn : allTheNodes) {
+        for (final DataSchemaNode dsn : allTheNodes) {
             if (dsn instanceof DataNodeContainer) {
                 allTheNodes.addAll(((DataNodeContainer) dsn).getChildNodes());
             }
