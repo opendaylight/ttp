@@ -18,12 +18,6 @@
     <repository>mvn:org.opendaylight.openflowjava/features-openflowjava/${openflowjava.version}/xml/features</repository>
     -->
 
-    <!-- TTP "all" feature -->
-    <feature name='odl-ttp-all' version='${project.version}' description='OpenDaylight :: ttp :: All'>
-        <feature version='${project.version}'>odl-ttp-model</feature>
-        <feature version='${project.version}'>odl-ttp-model-rest</feature>
-    </feature>
-
     <!-- TTP Model feature -->
     <feature name='odl-ttp-model' version='${project.version}' description='OpenDaylight :: ttp :: Model'>
         <feature version='${mdsal.model.version}'>odl-mdsal-models</feature>

@@ -25,7 +25,6 @@
    <modules>
       <module>features-ttp</module>
       <module>features4-ttp</module>
-      <module>odl-ttp-all</module>
       <module>odl-ttp-model</module>
       <module>odl-ttp-model-rest</module>
    </modules>
