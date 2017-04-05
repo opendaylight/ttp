@@ -5,13 +5,13 @@
   <parent>
     <groupId>org.opendaylight.odlparent</groupId>
     <artifactId>odlparent</artifactId>
-    <version>1.7.3-SNAPSHOT</version>
+    <version>1.7.3-Boron-SR3</version>
     <relativePath/>
   </parent>
 
   <groupId>org.opendaylight.ttp</groupId>
   <artifactId>ttp-parent</artifactId>
-  <version>0.3.3-SNAPSHOT</version>
+  <version>0.3.3-Boron-SR3</version>
   <packaging>pom</packaging>
 
   <prerequisites>
@@ -22,10 +22,10 @@
     <!-- These are required to build -->
     <jmxGeneratorPath>src/main/yang-gen-config</jmxGeneratorPath>
     <salGeneratorPath>src/main/yang-gen-sal</salGeneratorPath>
-    <yangtools.version>1.0.3-SNAPSHOT</yangtools.version>
-    <mdsal.model.version>0.9.3-SNAPSHOT</mdsal.model.version>
-    <openflowjava.version>0.8.3-SNAPSHOT</openflowjava.version>
-    <controller.version>1.4.3-SNAPSHOT</controller.version>
+    <yangtools.version>1.0.3-Boron-SR3</yangtools.version>
+    <mdsal.model.version>0.9.3-Boron-SR3</mdsal.model.version>
+    <openflowjava.version>0.8.3-Boron-SR3</openflowjava.version>
+    <controller.version>1.4.3-Boron-SR3</controller.version>
   </properties>
 
   <scm>
@@ -66,7 +66,7 @@
             <dependency>
               <groupId>org.opendaylight.controller</groupId>
               <artifactId>checkstyle</artifactId>
-              <version>0.3.3-SNAPSHOT</version>
+              <version>0.3.3-Boron-SR3</version>
             </dependency>
           </dependencies>
           <executions>
