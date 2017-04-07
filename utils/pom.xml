@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.opendaylight.ttp</groupId>
     <artifactId>ttp-parent</artifactId>
-    <version>0.3.3-SNAPSHOT</version>
+    <version>0.3.4-SNAPSHOT</version>
     <relativePath>../ttp-parent</relativePath>
   </parent>
   <artifactId>utils</artifactId>
