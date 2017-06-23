@@ -23,7 +23,7 @@
     <name>ODL :: ttp :: ${project.artifactId}</name>
 
    <modules>
-      <module>features4-ttp</module>
+      <module>features-ttp</module>
       <module>odl-ttp-model</module>
       <module>odl-ttp-model-rest</module>
    </modules>
