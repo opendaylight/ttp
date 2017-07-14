@@ -37,7 +37,7 @@ and is available at http://www.eclipse.org/legal/epl-v10.html INTERNAL
 
     <dependency>
       <groupId>org.opendaylight.ttp</groupId>
-      <artifactId>features4-ttp</artifactId>
+      <artifactId>features-ttp</artifactId>
       <classifier>features</classifier>
       <version>${project.version}</version>
       <type>xml</type>
