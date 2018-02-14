@@ -9,7 +9,7 @@
   </parent>
   <groupId>org.opendaylight.ttp</groupId>
   <artifactId>utils</artifactId>
-  <version>0.5.2-SNAPSHOT</version>
+  <version>0.5.2</version>
   <packaging>jar</packaging>
   <!-- <name> formatting is used by autorelease to parse and notify projects on
        build failure. Please do not modify this unless you have a good reason. -->
@@ -27,12 +27,12 @@
     <dependency>
       <artifactId>sal-binding-broker-impl</artifactId>
       <groupId>org.opendaylight.controller</groupId>
-      <version>1.6.2-SNAPSHOT</version>
+      <version>1.6.2</version>
     </dependency>
     <dependency>
       <artifactId>yang-data-codec-gson</artifactId>
       <groupId>org.opendaylight.yangtools</groupId>
-      <version>1.2.2-SNAPSHOT</version>
+      <version>1.2.2</version>
     </dependency>
   </dependencies>
 
